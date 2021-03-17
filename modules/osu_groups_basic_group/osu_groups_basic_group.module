@@ -1,0 +1,17 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_form_alter().
+ */
+function osu_groups_basic_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'group_basic_group_add_form') {
+    $form['field_group_landing_page']['widget'][0]['target_id']['#attributes']['disabled'] = 'disabled';
+    $form['field_group_landing_page']['widget'][0]['target_id']['#description'] = t('This is disabled until your group is created');
+  }
+  if ($form_id === 'group_basic_group_edit_form') {
+    $group_form = $form_state->getFormObject()->getEntity();
+    $form['field_group_landing_page']['widget'][0]['target_id']['#selection_settings']['view']['arguments'][0] = $group_form->id();
+  }
+}
