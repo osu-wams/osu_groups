@@ -7,5 +7,5 @@ core_version_requirement: ^8 || ^9
 dependencies:
   - group:group
   - group:gnode
-  - entitygroupfield:entitygroupfield
+#  - entitygroupfield:entitygroupfield
   - group_content_menu:group_content_menu
