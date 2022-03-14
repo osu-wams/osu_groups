@@ -1,8 +1,7 @@
 name: OSU Groups Basic Group
 type: module
-description: Basic Group Type for OSU.
+description: Basic Group Type for OSU Use this as the Main group for a site..
 package: OSU
-core: 8.x
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^8 || ^9 || ^10
 dependencies:
   - osu_groups:osu_groups
