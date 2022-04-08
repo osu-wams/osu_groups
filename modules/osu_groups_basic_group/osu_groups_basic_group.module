@@ -1,6 +1,8 @@
 <?php
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\group\Entity\GroupContent;
+use Drupal\node\Entity\Node;
 
 /**
  * Implements hook_form_alter().
@@ -13,5 +15,33 @@ function osu_groups_basic_group_form_alter(&$form, FormStateInterface $form_stat
   if ($form_id === 'group_basic_group_edit_form') {
     $group_form = $form_state->getFormObject()->getEntity();
     $form['field_group_landing_page']['widget'][0]['target_id']['#selection_settings']['view']['arguments'][0] = $group_form->id();
+  }
+}
+
+/**
+ * Implements hook_pathauto_alias_alter().
+ */
+function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
+  if ($context['module'] === 'node') {
+    /** @var Node $node */
+    $node = $context['data']['node'];
+    $group_content = GroupContent::loadByEntity($node);
+    if ($group_content) {
+      /** @var \Drupal\group\Entity\Group $group */
+      $group = array_shift($group_content)->getGroup();
+      if (count($group->get('field_group_landing_page')) > 0) {
+        /** @var Node $group_landing_page */
+        $group_landing_page = $group->get('field_group_landing_page')[0]->entity;
+        // Only operate when not on group landing page.
+        if ($group_landing_page && ($group_landing_page->id() !== $node->id())) {
+          $group_landing_page_path = $group_landing_page->toUrl()
+            ->toString();
+          // If we don't start with the group path then add it, else do nothing.
+          if (substr_compare($alias, $group_landing_page_path, 0, strlen($group_landing_page_path)) !== 0) {
+            $alias = $group_landing_page_path . $alias;
+          }
+        }
+      }
+    }
   }
 }
