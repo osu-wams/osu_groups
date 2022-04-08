@@ -1,10 +1,10 @@
 name: OSU Groups
 type: module
-description: Group stuff
+description: Basic Configuration for OSU Groups
 package: OSU
 core_version_requirement: ^8 || ^9 || ^10
+version: '1.0.0-alpha3'
 dependencies:
   - group:group
   - group:gnode
-#  - entitygroupfield:entitygroupfield
   - group_content_menu:group_content_menu
