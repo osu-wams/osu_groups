@@ -8,6 +8,9 @@ dependencies:
     - group
     - node
     - user
+  enforced:
+    module:
+      - osu_groups_basic_group
 id: group_landing_page_reference_content
 label: 'Group Landing Page Reference Content'
 module: views
