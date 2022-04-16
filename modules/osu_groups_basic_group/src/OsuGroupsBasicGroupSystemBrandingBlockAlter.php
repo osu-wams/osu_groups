@@ -22,6 +22,7 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
     $current_path = Drupal::service('path.current')->getPath();
     $path = Drupal::service('path_alias.manager')
       ->getPathByAlias($current_path);
+    // Ensures Block will be cached based on URL path only.
     CacheableMetadata::createFromRenderArray($build)
       ->addCacheContexts(['url.path'])
       ->applyTo($build);
@@ -30,7 +31,6 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
       $osu_groups = new OsuGroupsHandler();
       $osu_groups_basic_group = new OsuGroupsBasicGroupHandler();
       $group_content = $osu_groups->getGroupContentFromNode($node);
-      // Ensures Block will be cached based on URL path only.
       if ($group_content) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
         $group_landing_page = $osu_groups_basic_group->getGroupLandingNode($group_content->getGroup());
