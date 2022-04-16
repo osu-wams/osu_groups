@@ -1,8 +1,11 @@
 <?php
 
+use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
+use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
+use Drupal\osu_groups\OsuGroupsHandler;
+use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler;
 
 /**
  * Implements hook_form_alter().
@@ -25,23 +28,71 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
   if ($context['module'] === 'node') {
     /** @var Node $node */
     $node = $context['data']['node'];
-    $group_content = GroupContent::loadByEntity($node);
+    $group_handler = new OsuGroupsHandler();
+    $osu_basic_group_handler = new OsuGroupsBasicGroupHandler();
+    $group_content = $group_handler->getGroupContentFromNode($node);
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
-      $group = array_shift($group_content)->getGroup();
-      if (count($group->get('field_group_landing_page')) > 0) {
-        /** @var Node $group_landing_page */
-        $group_landing_page = $group->get('field_group_landing_page')[0]->entity;
-        // Only operate when not on group landing page.
-        if ($group_landing_page && ($group_landing_page->id() !== $node->id())) {
-          $group_landing_page_path = $group_landing_page->toUrl()
-            ->toString();
-          // If we don't start with the group path then add it, else do nothing.
-          if (substr_compare($alias, $group_landing_page_path, 0, strlen($group_landing_page_path)) !== 0) {
-            $alias = $group_landing_page_path . $alias;
-          }
+      $group = $group_content->getGroup();
+      /** @var Node $group_landing_node */
+      $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
+      // Only operate when not on group landing page.
+      if ($group_landing_node && ($group_landing_node->id() !== $node->id())) {
+        $group_landing_page_path = $group_landing_node->toUrl()->toString();
+        // If we don't start with the group path then add it, else do nothing.
+        if (substr_compare($alias, $group_landing_page_path, 0, strlen($group_landing_page_path)) !== 0) {
+          $alias = $group_landing_page_path . $alias;
         }
       }
     }
   }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function osu_groups_basic_group_preprocess_html(&$variables) {
+  $current_path = Drupal::service('path.current')->getPath();
+  $path = Drupal::service('path_alias.manager')->getPathByAlias($current_path);
+  if (preg_match('/node\/(\d+)/', $path, $matches)) {
+    $node = Node::load($matches[1]);
+    $osu_groups = new OsuGroupsHandler();
+    $osu_basic_group_handler = new OsuGroupsBasicGroupHandler();
+    $group_content = $osu_groups->getGroupContentFromNode($node);
+    if ($group_content) {
+      $group = $group_content->getGroup();
+      $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
+      /**
+       * On Group Pages that are not the group lading page, insert Group name
+       * after node name.
+       */
+      if ($group_landing_node && ($group_landing_node->id() !== $node->id())) {
+        $group_name = $osu_groups->getGroupnameFromGroup($group);
+        $page_title_array = explode(' | ', $variables['head_title']['title']);
+        array_splice($page_title_array, 1, 0, $group_name);
+        $variables['head_title']['title'] = implode(' | ', $page_title_array);
+      }
+      /*
+       * On Group Landing Pages, remove the Node title from head and replace
+       * with group name.
+       */
+      elseif ($group_landing_node && ($group_landing_node->id() === $node->id())) {
+        $group_name = $osu_groups->getGroupnameFromGroup($group);
+        $page_title_array = explode(' | ', $variables['head_title']['title']);
+        array_splice($page_title_array, 0, 1, $group_name);
+        $variables['head_title']['title'] = implode(' | ', $page_title_array);
+      }
+    }
+
+  }
+}
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function osu_groups_basic_group_block_view_system_branding_block_alter(array &$build, BlockPluginInterface $block) {
+  $build['#pre_render'][] = [
+    OsuGroupsBasicGroupSystemBrandingBlockAlter::class,
+    'preRender',
+  ];
 }
