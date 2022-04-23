@@ -34,10 +34,12 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
       if ($group_content) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
         $group_landing_page = $osu_groups_basic_group->getGroupLandingNode($group_content->getGroup());
-        $group_landing_page->toUrl();
-        $group_landing_page_path = $group_landing_page->toUrl()->toString();
-        $build['content']['site_name']['#markup'] = $group_name;
-        $build['content']['site_path']['#uri'] = $group_landing_page_path;
+        if (!is_null($group_landing_page)) {
+          $group_landing_page->toUrl();
+          $group_landing_page_path = $group_landing_page->toUrl()->toString();
+          $build['content']['site_name']['#markup'] = $group_name;
+          $build['content']['site_path']['#uri'] = $group_landing_page_path;
+        }
       }
     }
     return $build;
