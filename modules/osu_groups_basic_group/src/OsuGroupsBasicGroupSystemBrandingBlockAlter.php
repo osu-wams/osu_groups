@@ -2,7 +2,6 @@
 
 namespace Drupal\osu_groups_basic_group;
 
-use Drupal;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Render\Element\RenderCallbackInterface;
 use Drupal\node\Entity\Node;
@@ -16,11 +15,11 @@ use Drupal\osu_groups\OsuGroupsHandler;
 class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInterface {
 
   /**
-   * #pre_render callback: Sets site name if node is in a group.
+   * Pre Render Callback Sets site name if node is in a group.
    */
   public static function preRender($build) {
-    $current_path = Drupal::service('path.current')->getPath();
-    $path = Drupal::service('path_alias.manager')
+    $current_path = \Drupal::service('path.current')->getPath();
+    $path = \Drupal::service('path_alias.manager')
       ->getPathByAlias($current_path);
     // Ensures Block will be cached based on URL path only.
     CacheableMetadata::createFromRenderArray($build)
