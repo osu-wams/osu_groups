@@ -29,8 +29,8 @@ function osu_groups_basic_group_preprocess_html(&$variables) {
   $path = Drupal::service('path_alias.manager')->getPathByAlias($current_path);
   if (preg_match('/node\/(\d+)/', $path, $matches)) {
     $node = Node::load($matches[1]);
-    $osu_groups = new OsuGroupsHandler();
-    $osu_basic_group_handler = new OsuGroupsBasicGroupHandler();
+    $osu_groups = \Drupal::service('osu_groups.group_handler');
+    $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
     $group_content = $osu_groups->getGroupContentFromNode($node);
     if ($group_content) {
       $group = $group_content->getGroup();
@@ -68,8 +68,8 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     /** @var Node $node */
     $node = $context['data']['node'];
     $nid = $node->id();
-    $group_handler = new OsuGroupsHandler();
-    $osu_basic_group_handler = new OsuGroupsBasicGroupHandler();
+    $group_handler = \Drupal::service('osu_groups.group_handler');
+    $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
     // If node is group content, node is created first, then associated to group thus updating group content.
     if ($group_content) {

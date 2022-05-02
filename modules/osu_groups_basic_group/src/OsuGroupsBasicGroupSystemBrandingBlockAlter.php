@@ -27,8 +27,8 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
       ->applyTo($build);
     if (preg_match('/node\/(\d+)/', $path, $matches)) {
       $node = Node::load($matches[1]);
-      $osu_groups = new OsuGroupsHandler();
-      $osu_groups_basic_group = new OsuGroupsBasicGroupHandler();
+      $osu_groups = \Drupal::service('osu_groups.group_handler');
+      $osu_groups_basic_group = \Drupal::service('osu_groups_basic_group.group_handler');
       $group_content = $osu_groups->getGroupContentFromNode($node);
       if ($group_content) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
