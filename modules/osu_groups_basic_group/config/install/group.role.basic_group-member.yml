@@ -11,5 +11,13 @@ audience: member
 group_type: basic_group
 permissions_ui: true
 permissions:
+  - 'access group_node overview'
+  - 'create group_node:page content'
+  - 'create group_node:page entity'
+  - 'delete own group_node:page content'
+  - 'delete own group_node:page entity'
+  - 'update own group_node:page content'
+  - 'update own group_node:page entity'
   - 'view group'
+  - 'view group_node:page content'
   - 'view group_node:page entity'
