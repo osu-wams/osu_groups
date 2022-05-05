@@ -36,13 +36,13 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
       $group_content = $osu_groups->getGroupContentFromNode($node);
       if ($group_content) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
-        # Set the group name in the site branding block.
+        // Set the group name in the site branding block.
         $build['content']['site_name']['#markup'] = $group_name;
         $group_landing_page = $osu_groups_basic_group->getGroupLandingNode($group_content->getGroup());
         if (!is_null($group_landing_page)) {
           $group_landing_page->toUrl();
           $group_landing_page_path = $group_landing_page->toUrl()->toString();
-          # Set the path for the site branding block.
+          // Set the path for the site branding block.
           $build['content']['site_path']['#uri'] = $group_landing_page_path;
         }
       }
@@ -50,13 +50,13 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
     elseif (preg_match('/group\/(\d+)/', $path, $matches)) {
       $group = Group::load($matches[1]);
       $group_name = $osu_groups->getGroupnameFromGroup($group);
-      # Set the group name in the site branding block.
+      // Set the group name in the site branding block.
       $build['content']['site_name']['#markup'] = $group_name;
       $group_landing_page = $osu_groups_basic_group->getGroupLandingNode($group);
       if (!is_null($group_landing_page)) {
         $group_landing_page->toUrl();
         $group_landing_page_path = $group_landing_page->toUrl()->toString();
-        # Set the path for the site branding block.
+        // Set the path for the site branding block.
         $build['content']['site_path']['#uri'] = $group_landing_page_path;
       }
     }
