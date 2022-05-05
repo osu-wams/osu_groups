@@ -4,18 +4,16 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
 use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
-use Drupal\osu_groups\OsuGroupsHandler;
-use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler;
 
 /**
  * Implements hook_form_alter().
  */
 function osu_groups_basic_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id === 'group_basic_group_add_form') {
+  if (preg_match('/group_(\w+)_add_form/', $form_id) && array_key_exists('field_group_landing_page', $form)) {
     $form['field_group_landing_page']['widget'][0]['target_id']['#attributes']['disabled'] = 'disabled';
     $form['field_group_landing_page']['widget'][0]['target_id']['#description'] = t('This is disabled until your group is created');
   }
-  if ($form_id === 'group_basic_group_edit_form') {
+  if (preg_match('/group_(\w+)_edit_form/', $form_id) && array_key_exists('field_group_landing_page', $form)) {
     $group_form = $form_state->getFormObject()->getEntity();
     $form['field_group_landing_page']['widget'][0]['target_id']['#selection_settings']['view']['arguments'][0] = $group_form->id();
   }
@@ -29,11 +27,17 @@ function osu_groups_basic_group_preprocess_html(&$variables) {
   $path = Drupal::service('path_alias.manager')->getPathByAlias($current_path);
   if (preg_match('/node\/(\d+)/', $path, $matches)) {
     $node = Node::load($matches[1]);
+
+    /** @var \Drupal\osu_groups\OsuGroupsHandler $osu_groups */
     $osu_groups = \Drupal::service('osu_groups.group_handler');
+    /** @var \Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler $osu_basic_group_handler */
     $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
+
     $group_content = $osu_groups->getGroupContentFromNode($node);
     if ($group_content) {
+      /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
+      /** @var \Drupal\node\Entity\Node $group_landing_node */
       $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
       /**
        * On Group Pages that are not the group lading page, insert Group name
@@ -65,17 +69,19 @@ function osu_groups_basic_group_preprocess_html(&$variables) {
  */
 function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
   if ($context['module'] === 'node') {
-    /** @var Node $node */
+    /** @var \Drupal\node\Entity\Node $node */
     $node = $context['data']['node'];
     $nid = $node->id();
+    /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
     $group_handler = \Drupal::service('osu_groups.group_handler');
+    /** @var \Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler $osu_basic_group_handler */
     $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
     // If node is group content, node is created first, then associated to group thus updating group content.
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
-      /** @var Node $group_landing_node */
+      /** @var \Drupal\node\Entity\Node $group_landing_node */
       $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
       // Only operate when not on group landing page.
       if ($group_landing_node && ($group_landing_node->id() !== $node->id())) {
