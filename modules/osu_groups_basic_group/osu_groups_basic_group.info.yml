@@ -3,7 +3,7 @@ type: module
 description: Basic Group Type for OSU Use this as the Main group for a site..
 package: OSU
 core_version_requirement: ^8 || ^9 || ^10
-version: '1.0.0-alpha9'
+version: '1.0.0-beta1'
 dependencies:
   - osu_groups:osu_groups
   - entitygroupfield:entitygroupfield
