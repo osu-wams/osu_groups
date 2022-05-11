@@ -13,7 +13,7 @@ third_party_settings:
 id: madrone_groupoperations
 theme: madrone
 region: highlighted
-weight: 0
+weight: -10
 provider: null
 plugin: group_operations
 settings:

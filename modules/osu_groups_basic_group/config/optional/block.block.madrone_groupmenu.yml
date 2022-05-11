@@ -11,7 +11,7 @@ dependencies:
 id: madrone_groupmenu
 theme: madrone
 region: primary_menu
-weight: 0
+weight: 10
 provider: null
 plugin: 'group_content_menu:group'
 settings:
