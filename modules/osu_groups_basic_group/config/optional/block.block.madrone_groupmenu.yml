@@ -4,23 +4,28 @@ dependencies:
   config:
     - group_content_menu.group_content_menu_type.group
   module:
+    - block_visibility_groups
     - group_content_menu
   theme:
     - madrone
 id: madrone_groupmenu
 theme: madrone
-region: secondary_menu
-weight: -6
+region: primary_menu
+weight: 0
 provider: null
 plugin: 'group_content_menu:group'
 settings:
   id: 'group_content_menu:group'
   label: 'Group Menu'
-  provider: group_content_menu
   label_display: '0'
-  level: 1
-  depth: 2
-  expand_all_items: true
+  provider: group_content_menu
   context_mapping:
     group: '@group.group_route_context:group'
-visibility: {  }
+  level: 1
+  depth: 0
+  expand_all_items: true
+visibility:
+  condition_group:
+    id: condition_group
+    negate: false
+    block_visibility_group: ''
