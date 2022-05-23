@@ -72,11 +72,6 @@ function osu_groups_basic_group_update_9001() {
     ->create($source->read('field.field.group.basic_group.field_hide_global_navigation'))
     ->save();
 
-  // $form_display = \Drupal::entityTypeManager()->getStorage('entity_form_display')
-    // ->load('group.basic_group.default');
-  // $form_display->setComponent('field_hide_global_navigation', [
-      // 'weight' => 32,
-  // ])->save();
   // Update entity form display to show new field
   \Drupal::entityTypeManager()->getStorage('entity_form_display')
     ->load('group.basic_group.default')
