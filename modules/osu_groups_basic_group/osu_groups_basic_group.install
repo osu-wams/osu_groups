@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\user\Entity\Role;
 use Drupal\views\Entity\View;
 
@@ -47,4 +48,34 @@ function osu_groups_basic_group_install($is_syncing) {
   $architect_user_role->grantPermission('administer group content menu types');
 
   $architect_user_role->save();
+}
+
+/**
+ * Update with new hide_main_navigation field
+ */
+function osu_groups_basic_group_update_9001() {
+  $install_profile_path = \Drupal::service('module_handler')
+    ->getModule('osu_groups_basic_group')
+    ->getPath();
+  $config_path = realpath($install_profile_path . '/config/install');
+  $source = new FileStorage($config_path);
+
+  // Obtain the storage manager for field storage bases
+  // Create a new field from the yaml configuration and save
+  \Drupal::entityTypeManager()->getStorage('field_storage_config')
+    ->create($source->read('field.storage.group.field_hide_global_navigation'))
+    ->save();
+ 
+  // Obtain the storage manager for field instances
+  // Create a new field instance from the yaml configuration and save
+  \Drupal::entityTypeManager()->getStorage('field_config')
+    ->create($source->read('field.field.group.basic_group.field_hide_global_navigation'))
+    ->save();
+
+  // Update entity form display to show new field
+  \Drupal::entityTypeManager()->getStorage('entity_form_display')
+    ->load('group.basic_group.default')
+    ->setComponent('field_hide_global_navigation', [
+      'weight' => 32,
+    ])->save();
 }
