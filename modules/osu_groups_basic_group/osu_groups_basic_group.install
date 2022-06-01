@@ -34,9 +34,105 @@ function osu_groups_basic_group_install($is_syncing) {
   $group_members_view->set('display', $group_members_view_display);
   $group_members_view->save();
 
+  // VBO field information for this specific Group Nodes view.
+  $nodes_vbo_operations_field = [
+    "id" => "views_bulk_operations_bulk_form",
+    "table" => "views",
+    "field" => "views_bulk_operations_bulk_form",
+    "relationship" => "none",
+    "group_type" => "group",
+    "admin_label" => "",
+    "plugin_id" => "views_bulk_operations_bulk_form",
+    "label" => "Bulk Operations",
+    "exclude" => FALSE,
+    "alter" => [
+      "alter_text" => FALSE,
+      "text" => "",
+      "make_link" => FALSE,
+      "path" => "",
+      "absolute" => FALSE,
+      "external" => FALSE,
+      "replace_spaces" => FALSE,
+      "path_case" => "none",
+      "trim_whitespace" => FALSE,
+      "alt" => "",
+      "rel" => "",
+      "link_class" => "",
+      "prefix" => "",
+      "suffix" => "",
+      "target" => "",
+      "nl2br" => FALSE,
+      "max_length" => 0,
+      "word_boundary" => TRUE,
+      "ellipsis" => TRUE,
+      "more_link" => FALSE,
+      "more_link_text" => "",
+      "more_link_path" => "",
+      "strip_tags" => FALSE,
+      "trim" => FALSE,
+      "preserve_tags" => "",
+      "html" => FALSE,
+    ],
+    "element_type" => "",
+    "element_class" => "",
+    "element_label_type" => "",
+    "element_label_class" => "",
+    "element_label_colon" => TRUE,
+    "element_wrapper_type" => "",
+    "element_wrapper_class" => "",
+    "element_default_classes" => TRUE,
+    "empty" => "",
+    "hide_empty" => FALSE,
+    "empty_zero" => FALSE,
+    "hide_alter_empty" => TRUE,
+    "batch" => TRUE,
+    "batch_size" => 10,
+    "form_step" => TRUE,
+    "buttons" => FALSE,
+    "action_title" => "Action",
+    "clear_on_exposed" => TRUE,
+    "force_selection_info" => FALSE,
+    "selected_actions" => [
+      0 => [
+        "action_id" => "node_assign_owner_action",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      6 => [
+        "action_id" => "views_bulk_edit",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+          "get_bundles_from_results" => TRUE,
+        ],
+      ],
+      8 => [
+        "action_id" => "entity:publish_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      9 => [
+        "action_id" => "entity:save_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      10 => [
+        "action_id" => "entity:unpublish_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+    ],
+  ];
+
   $group_nodes_view = View::load('group_nodes');
   $group_nodes_view_display = $group_nodes_view->get('display');
   $group_nodes_view_display['default']['display_options']['css_class'] = 'container';
+  $group_nodes_view_fields = $group_nodes_view_display['default']['display_options']['fields'];
+  $group_nodes_view_fields = array_merge(['views_bulk_operations_bulk_form' => $nodes_vbo_operations_field], $group_nodes_view_fields);
+  $group_nodes_view_display['default']['display_options']['fields'] = $group_nodes_view_fields;
   $group_nodes_view->set('display', $group_nodes_view_display);
   $group_nodes_view->save();
 
@@ -65,7 +161,7 @@ function osu_groups_basic_group_update_9001() {
   \Drupal::entityTypeManager()->getStorage('field_storage_config')
     ->create($source->read('field.storage.group.field_hide_global_navigation'))
     ->save();
- 
+
   // Obtain the storage manager for field instances
   // Create a new field instance from the yaml configuration and save
   \Drupal::entityTypeManager()->getStorage('field_config')
@@ -78,4 +174,110 @@ function osu_groups_basic_group_update_9001() {
     ->setComponent('field_hide_global_navigation', [
       'weight' => 32,
     ])->save();
+}
+
+/**
+ * Add VBO field to group node view.
+ */
+function osu_groups_basic_group_update_9002(&$sandbox) {
+  // VBO field information for this specific Group Nodes view.
+  $nodes_vbo_operations_field = [
+    "id" => "views_bulk_operations_bulk_form",
+    "table" => "views",
+    "field" => "views_bulk_operations_bulk_form",
+    "relationship" => "none",
+    "group_type" => "group",
+    "admin_label" => "",
+    "plugin_id" => "views_bulk_operations_bulk_form",
+    "label" => "Bulk Operations",
+    "exclude" => FALSE,
+    "alter" => [
+      "alter_text" => FALSE,
+      "text" => "",
+      "make_link" => FALSE,
+      "path" => "",
+      "absolute" => FALSE,
+      "external" => FALSE,
+      "replace_spaces" => FALSE,
+      "path_case" => "none",
+      "trim_whitespace" => FALSE,
+      "alt" => "",
+      "rel" => "",
+      "link_class" => "",
+      "prefix" => "",
+      "suffix" => "",
+      "target" => "",
+      "nl2br" => FALSE,
+      "max_length" => 0,
+      "word_boundary" => TRUE,
+      "ellipsis" => TRUE,
+      "more_link" => FALSE,
+      "more_link_text" => "",
+      "more_link_path" => "",
+      "strip_tags" => FALSE,
+      "trim" => FALSE,
+      "preserve_tags" => "",
+      "html" => FALSE,
+    ],
+    "element_type" => "",
+    "element_class" => "",
+    "element_label_type" => "",
+    "element_label_class" => "",
+    "element_label_colon" => TRUE,
+    "element_wrapper_type" => "",
+    "element_wrapper_class" => "",
+    "element_default_classes" => TRUE,
+    "empty" => "",
+    "hide_empty" => FALSE,
+    "empty_zero" => FALSE,
+    "hide_alter_empty" => TRUE,
+    "batch" => TRUE,
+    "batch_size" => 10,
+    "form_step" => TRUE,
+    "buttons" => FALSE,
+    "action_title" => "Action",
+    "clear_on_exposed" => TRUE,
+    "force_selection_info" => FALSE,
+    "selected_actions" => [
+      0 => [
+        "action_id" => "node_assign_owner_action",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      6 => [
+        "action_id" => "views_bulk_edit",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+          "get_bundles_from_results" => TRUE,
+        ],
+      ],
+      8 => [
+        "action_id" => "entity:publish_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      9 => [
+        "action_id" => "entity:save_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+      10 => [
+        "action_id" => "entity:unpublish_action:node",
+        "preconfiguration" => [
+          "add_confirmation" => TRUE,
+        ],
+      ],
+    ],
+  ];
+  $group_nodes_view = View::load('group_nodes');
+  $group_nodes_view_display = $group_nodes_view->get('display');
+  $group_nodes_view_fields = $group_nodes_view_display['default']['display_options']['fields'];
+  $group_nodes_view_fields = array_merge(['views_bulk_operations_bulk_form' => $nodes_vbo_operations_field], $group_nodes_view_fields);
+  $group_nodes_view_display['default']['display_options']['fields'] = $group_nodes_view_fields;
+  $group_nodes_view->set('display', $group_nodes_view_display);
+  $group_nodes_view->save();
+  return t('Group Node Views can now utilize VBO.');
 }
