@@ -154,11 +154,7 @@ function osu_groups_basic_group_install($is_syncing) {
  * Update with new hide_main_navigation field
  */
 function osu_groups_basic_group_update_9001() {
-  $install_profile_path = \Drupal::service('module_handler')
-    ->getModule('osu_groups_basic_group')
-    ->getPath();
-  $config_path = realpath($install_profile_path . '/config/install');
-  $source = new FileStorage($config_path);
+  $source = get_module_source_path();
 
   // Obtain the storage manager for field storage bases
   // Create a new field from the yaml configuration and save
@@ -302,14 +298,18 @@ function osu_groups_basic_group_update_9003(&$sandbox) {
   $group_members_view->set('display', $group_members_view_display);
   $group_members_view->save();
 
-  $install_profile_path = \Drupal::service('module_handler')
-    ->getModule('osu_groups_basic_group')
-    ->getPath();
-  $config_path = realpath($install_profile_path . '/config/install');
-  $source = new FileStorage($config_path);
+  $source = get_module_source_path();
   \Drupal::entityTypeManager()->getStorage('view')
     ->create($source->read('views.view.group_revisions'))
     ->save();
 
   return t('Group Views now use admin theme.');
+}
+
+function get_module_source_path() {
+  $install_profile_path = \Drupal::service('module_handler')
+    ->getModule('osu_groups_basic_group')
+    ->getPath();
+  $config_path = realpath($install_profile_path . '/config/install');
+  return new FileStorage($config_path);
 }
