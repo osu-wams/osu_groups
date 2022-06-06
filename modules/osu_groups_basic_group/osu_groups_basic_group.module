@@ -3,6 +3,7 @@
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
 use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
 
 /**
@@ -115,4 +116,39 @@ function osu_groups_basic_group_block_view_system_branding_block_alter(array &$b
     OsuGroupsBasicGroupSystemBrandingBlockAlter::class,
     'preRender',
   ];
+}
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function osu_groups_basic_group_form_node_form_alter(&$form, FormStateInterface $form_state) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $form_state->getFormObject()->getEntity();
+  // If node is new and created in group context
+  // OR node is a group page and does not have a normal menu entry
+  if (($form_state->get('group') && $node->isNew())
+      || (!menu_ui_get_menu_link_defaults($node)['id'] && isGroup())) {
+    $form['menu']['link']['menu_parent']['#default_value'] = 'Group Menu:';
+  }
+}
+
+/**
+  * Determines if existing page is a group page.
+  *
+  *
+  * @return bool
+  *   True if current page is a group page.
+  */
+function isGroup(): bool {
+  $is_group = FALSE;
+
+  if ($node = Drupal::routeMatch()->getParameter('node')) {
+    $osu_groups = \Drupal::service('osu_groups.group_handler');
+    $group_content = $osu_groups->getGroupContentFromNode($node);
+    if ($group_content) {
+      $is_group = TRUE;
+    }
+  }
+
+  return $is_group;
 }
