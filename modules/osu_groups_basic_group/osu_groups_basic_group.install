@@ -27,10 +27,12 @@ function osu_groups_basic_group_install($is_syncing) {
   ])
     ->save();
 
-  // Update views to use boostrap classes.
+  // Update views to use bootstrap classes.
   $group_members_view = View::load('group_members');
   $group_members_view_display = $group_members_view->get('display');
   $group_members_view_display['default']['display_options']['css_class'] = 'container';
+  // Set view to use admin theme.
+  $group_members_view_display['page_1']['display_options']['use_admin_theme'] = TRUE;
   $group_members_view->set('display', $group_members_view_display);
   $group_members_view->save();
 
@@ -130,6 +132,8 @@ function osu_groups_basic_group_install($is_syncing) {
   $group_nodes_view = View::load('group_nodes');
   $group_nodes_view_display = $group_nodes_view->get('display');
   $group_nodes_view_display['default']['display_options']['css_class'] = 'container';
+  // Set view to use admin theme.
+  $group_nodes_view_display['page_1']['display_options']['use_admin_theme'] = TRUE;
   $group_nodes_view_fields = $group_nodes_view_display['default']['display_options']['fields'];
   $group_nodes_view_fields = array_merge(['views_bulk_operations_bulk_form' => $nodes_vbo_operations_field], $group_nodes_view_fields);
   $group_nodes_view_display['default']['display_options']['fields'] = $group_nodes_view_fields;
@@ -150,11 +154,7 @@ function osu_groups_basic_group_install($is_syncing) {
  * Update with new hide_main_navigation field
  */
 function osu_groups_basic_group_update_9001() {
-  $install_profile_path = \Drupal::service('module_handler')
-    ->getModule('osu_groups_basic_group')
-    ->getPath();
-  $config_path = realpath($install_profile_path . '/config/install');
-  $source = new FileStorage($config_path);
+  $source = get_module_source_path();
 
   // Obtain the storage manager for field storage bases
   // Create a new field from the yaml configuration and save
@@ -280,4 +280,31 @@ function osu_groups_basic_group_update_9002(&$sandbox) {
   $group_nodes_view->set('display', $group_nodes_view_display);
   $group_nodes_view->save();
   return t('Group Node Views can now utilize VBO.');
+}
+
+/**
+ * Add use_admin_theme to group views
+ */
+function osu_groups_basic_group_update_9003(&$sandbox) {
+  $group_nodes_view = View::load('group_nodes');
+  $group_nodes_view_display = $group_nodes_view->get('display');
+  $group_nodes_view_display['page_1']['display_options']['use_admin_theme'] = TRUE;
+  $group_nodes_view->set('display', $group_nodes_view_display);
+  $group_nodes_view->save();
+
+  $group_members_view = View::load('group_members');
+  $group_members_view_display = $group_members_view->get('display');
+  $group_members_view_display['page_1']['display_options']['use_admin_theme'] = TRUE;
+  $group_members_view->set('display', $group_members_view_display);
+  $group_members_view->save();
+
+  return t('Group Views now use admin theme.');
+}
+
+function get_module_source_path() {
+  $install_profile_path = \Drupal::service('module_handler')
+    ->getModule('osu_groups_basic_group')
+    ->getPath();
+  $config_path = realpath($install_profile_path . '/config/install');
+  return new FileStorage($config_path);
 }
