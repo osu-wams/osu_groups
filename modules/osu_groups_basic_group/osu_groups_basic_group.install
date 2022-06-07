@@ -152,6 +152,16 @@ function osu_groups_basic_group_install($is_syncing) {
   $architect_user_role->grantPermission('bypass group access');
 
   $architect_user_role->save();
+
+  $manage_content = Role::load('manage_content');
+  $manage_content->grantPermission('configure editable basic_group group layout overrides');
+
+  $manage_content->save();
+
+  $content_authors = Role::load('content_authors');
+  $content_authors->grantPermission('configure editable basic_group group layout overrides');
+
+  $content_authors->save();
 }
 
 /**
