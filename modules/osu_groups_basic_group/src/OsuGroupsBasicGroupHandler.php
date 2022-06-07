@@ -63,7 +63,7 @@ class OsuGroupsBasicGroupHandler {
   }
 
   /**
-   * Check if the given field exists in teh given entity.
+   * Check if the given field exists in the given entity.
    *
    * @param string $field_name
    *   The filed name to check.
@@ -73,7 +73,7 @@ class OsuGroupsBasicGroupHandler {
    * @return bool
    *   A boolean TRUE if the field is in the entity type; otherwise, FALSE;
    */
-  public function entityTypeHasField($field_name, $entity_type = 'node') {
+  public function entityTypeHasField($field_name, $entity_type = 'node'): bool {
     $bundles = $this->bundleInfo->getBundleInfo($entity_type);
     foreach ($bundles as $bundle => $label) {
       $all_bundle_fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $bundle);
@@ -97,7 +97,7 @@ class OsuGroupsBasicGroupHandler {
    * @return bool
    *   A Boolean True if the field is in the bundle type; otherwise, FALSE.
    */
-  public function bundleHasField($field_name, $bundle = 'page', $entity_type = 'node') {
+  public function bundleHasField($field_name, $bundle = 'page', $entity_type = 'node'): bool {
     $all_bundle_fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $bundle);
     if (isset($all_bundle_fields[$field_name])) {
       return TRUE;
