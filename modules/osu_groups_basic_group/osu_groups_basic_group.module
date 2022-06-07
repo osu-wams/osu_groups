@@ -2,8 +2,6 @@
 
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\node\Entity\Node;
-use Drupal\node\NodeInterface;
 use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
 
 /**
@@ -24,44 +22,34 @@ function osu_groups_basic_group_form_alter(&$form, FormStateInterface $form_stat
  * Implements hook_preprocess_HOOK().
  */
 function osu_groups_basic_group_preprocess_html(&$variables) {
-  $current_path = Drupal::service('path.current')->getPath();
-  $path = Drupal::service('path_alias.manager')->getPathByAlias($current_path);
-  if (preg_match('/node\/(\d+)/', $path, $matches)) {
-    $node = Node::load($matches[1]);
-
+  if ($node = \Drupal::routeMatch()->getParameter('node')) {
     /** @var \Drupal\osu_groups\OsuGroupsHandler $osu_groups */
     $osu_groups = \Drupal::service('osu_groups.group_handler');
-    /** @var \Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler $osu_basic_group_handler */
-    $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
 
     $group_content = $osu_groups->getGroupContentFromNode($node);
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
-      /** @var \Drupal\node\Entity\Node $group_landing_node */
-      $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
       /**
-       * On Group Pages that are not the group lading page, insert Group name
-       * after node name.
+       * On Group Content Pages insert Group name after node name.
        */
-      if ($group_landing_node && ($group_landing_node->id() !== $node->id())) {
-        $group_name = $osu_groups->getGroupnameFromGroup($group);
-        $page_title_array = explode(' | ', $variables['head_title']['title']);
-        array_splice($page_title_array, 1, 0, $group_name);
-        $variables['head_title']['title'] = implode(' | ', $page_title_array);
-      }
-      /*
-       * On Group Landing Pages, remove the Node title from head and replace
-       * with group name.
-       */
-      elseif ($group_landing_node && ($group_landing_node->id() === $node->id())) {
-        $group_name = $osu_groups->getGroupnameFromGroup($group);
-        $page_title_array = explode(' | ', $variables['head_title']['title']);
-        array_splice($page_title_array, 0, 1, $group_name);
-        $variables['head_title']['title'] = implode(' | ', $page_title_array);
-      }
+      $group_name = $osu_groups->getGroupnameFromGroup($group);
+      $page_title_array = explode(' | ', $variables['head_title']['title']);
+      array_splice($page_title_array, 1, 0, $group_name);
+      $variables['head_title']['title'] = implode(' | ', $page_title_array);
     }
 
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function osu_groups_basic_group_preprocess_page_title(&$variables) {
+  // If we are on a group entity and on the display of it, hide the title.
+  if (\Drupal::routeMatch()->getParameter('group') && \Drupal::routeMatch()
+      ->getRouteName() === 'entity.group.canonical') {
+    $variables['title_attributes']['class'][] = "hidden";
   }
 }
 
@@ -75,35 +63,27 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     $nid = $node->id();
     /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
     $group_handler = \Drupal::service('osu_groups.group_handler');
-    /** @var \Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler $osu_basic_group_handler */
-    $osu_basic_group_handler = \Drupal::service('osu_groups_basic_group.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
     // If node is group content, node is created first, then associated to group thus updating group content.
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
-      /** @var \Drupal\node\Entity\Node $group_landing_node */
-      $group_landing_node = $osu_basic_group_handler->getGroupLandingNode($group);
-      // Only operate when not on group landing page.
-      if ($group_landing_node && ($group_landing_node->id() !== $node->id())) {
-        $group_landing_page_path = $group_landing_node->toUrl()->toString();
-        // If we don't start with the group path then add it, else do nothing.
-        if (substr_compare($alias, $group_landing_page_path, 0, strlen($group_landing_page_path)) !== 0) {
-          /** @var \Drupal\redirect\RedirectRepository $redirects */
-          $redirects = \Drupal::service('redirect.repository')
-            ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
-          /** @var \Drupal\redirect\Entity\Redirect $redirect */
-          foreach ($redirects as $redirect) {
-            // if redirect starts with our same path and might have a -number on the end
-            // delete the redirect as we probably don't need it.
-            if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
-              redirect_delete_by_path($redirect->getSourceUrl());
-            }
+      $group_path = $group->toUrl()->toString();
+      // If we don't start with the group path then add it, else do nothing.
+      if (substr_compare($alias, $group_path, 0, strlen($group_path)) !== 0) {
+        /** @var \Drupal\redirect\RedirectRepository $redirects */
+        $redirects = \Drupal::service('redirect.repository')
+          ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
+        /** @var \Drupal\redirect\Entity\Redirect $redirect */
+        foreach ($redirects as $redirect) {
+          // if redirect starts with our same path and might have a -number on the end
+          // delete the redirect as we probably don't need it.
+          if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
+            redirect_delete_by_path($redirect->getSourceUrl());
           }
-          $alias = $group_landing_page_path . $alias;
         }
+        $alias = $group_path . $alias;
       }
-
     }
   }
 }

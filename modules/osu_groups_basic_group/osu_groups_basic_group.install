@@ -144,8 +144,12 @@ function osu_groups_basic_group_install($is_syncing) {
   $architect_user_role = Role::load('architect');
   $architect_user_role->grantPermission('access group overview');
   $architect_user_role->grantPermission('administer group');
+  $architect_user_role->grantPermission('administer group display');
+  $architect_user_role->grantPermission('administer group fields');
+  $architect_user_role->grantPermission('administer group_content display');
+  $architect_user_role->grantPermission('administer group_content fields');
+  $architect_user_role->grantPermission('administer group_content form display');
   $architect_user_role->grantPermission('bypass group access');
-  $architect_user_role->grantPermission('administer group content menu types');
 
   $architect_user_role->save();
 }

@@ -4,6 +4,9 @@ dependencies:
   config:
     - field.storage.group.field_hide_global_navigation
     - group.type.basic_group
+  enforced:
+    module:
+      - osu_groups_basic_group
 id: group.basic_group.field_hide_global_navigation
 field_name: field_hide_global_navigation
 entity_type: group

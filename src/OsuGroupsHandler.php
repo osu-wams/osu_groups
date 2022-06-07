@@ -39,7 +39,7 @@ class OsuGroupsHandler {
    * @return string
    *   The String representing the Groups Name.
    */
-  public function getGroupnameFromGroup(Group $group) {
+  public function getGroupnameFromGroup(Group $group): string {
     return $group->get('label')->first()->getValue()['value'];
   }
 

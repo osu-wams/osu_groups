@@ -3,20 +3,19 @@ status: true
 dependencies:
   module:
     - group
-    - node
+    - metatag
   enforced:
     module:
-      - osu_groups
-id: group.field_group_landing_page
-field_name: field_group_landing_page
+      - osu_groups_basic_group
+id: group.field_meta_tags
+field_name: field_meta_tags
 entity_type: group
-type: entity_reference
-settings:
-  target_type: node
-module: core
+type: metatag
+settings: {  }
+module: metatag
 locked: false
 cardinality: 1
 translatable: true
-indexes: { }
+indexes: {  }
 persist_with_no_fields: false
 custom_storage: false
