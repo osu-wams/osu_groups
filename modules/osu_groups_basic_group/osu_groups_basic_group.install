@@ -298,11 +298,6 @@ function osu_groups_basic_group_update_9003(&$sandbox) {
   $group_members_view->set('display', $group_members_view_display);
   $group_members_view->save();
 
-  $source = get_module_source_path();
-  \Drupal::entityTypeManager()->getStorage('view')
-    ->create($source->read('views.view.group_revisions'))
-    ->save();
-
   return t('Group Views now use admin theme.');
 }
 
