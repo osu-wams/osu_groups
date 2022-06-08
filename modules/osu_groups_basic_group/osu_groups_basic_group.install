@@ -150,6 +150,8 @@ function osu_groups_basic_group_install($is_syncing) {
   $architect_user_role->grantPermission('administer group_content fields');
   $architect_user_role->grantPermission('administer group_content form display');
   $architect_user_role->grantPermission('bypass group access');
+  $architect_user_role->grantPermission('configure all basic_group group layout overrides');
+  $architect_user_role->grantPermission('configure editable basic_group group layout overrides');
 
   $architect_user_role->save();
 
