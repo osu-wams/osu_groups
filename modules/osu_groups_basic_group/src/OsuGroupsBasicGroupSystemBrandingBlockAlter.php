@@ -30,10 +30,10 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
         $group_name = $osu_groups->getGroupNameFromNode($node);
         $group = $group_content->getGroup();
         // Set the group name in the site branding block.
-        $build['content']['site_name']['#markup'] = $group_name;
+        $build['content']['group_name']['#markup'] = $group_name;
         $group_link = $group->toUrl()->toString();
         // Set the path for the site branding block.
-        $build['content']['site_path']['#uri'] = $group_link;
+        $build['content']['group_path']['#uri'] = $group_link;
 
       }
     }
@@ -41,10 +41,10 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
     elseif ($group = \Drupal::routeMatch()->getParameter('group')) {
       $group_name = $osu_groups->getGroupnameFromGroup($group);
       // Set the group name in the site branding block.
-      $build['content']['site_name']['#markup'] = $group_name;
+      $build['content']['group_name']['#markup'] = $group_name;
       $group_link = $group->toUrl()->toString();
       // Set the path for the site branding block.
-      $build['content']['site_path']['#uri'] = $group_link;
+      $build['content']['group_path']['#uri'] = $group_link;
     }
     return $build;
   }
