@@ -11,8 +11,8 @@ id: group.basic_group.field_hide_global_navigation
 field_name: field_hide_global_navigation
 entity_type: group
 bundle: basic_group
-label: 'Hide Global Navigation'
-description: ''
+label: 'Use Group Menu'
+description: 'By default the <em>Group Menu</em> will render in-place of the site navigation.<br />Uncheck this to use the site navigation instead.'
 required: false
 translatable: false
 default_value:

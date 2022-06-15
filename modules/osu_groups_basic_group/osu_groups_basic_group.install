@@ -324,3 +324,15 @@ function get_module_source_path() {
   $config_path = realpath($install_profile_path . '/config/install');
   return new FileStorage($config_path);
 }
+
+/**
+ * Update field label and description for the global nav toggle.
+ */
+function osu_groups_basic_group_update_9004(&$sandbox) {
+  $config_factory = \Drupal::configFactory();
+  $use_toggle_label = $config_factory->getEditable('field.field.group.basic_group.field_hide_global_navigation');
+  $use_toggle_label->set('label', 'Use Group Menu');
+  $use_toggle_label->set('description', 'By default the <em>Group Menu</em> will render in-place of the site navigation.<br />Uncheck this to use the site navigation instead.');
+  $use_toggle_label->save();
+  return t('Update field configuration for hide_global_navigation');
+}
