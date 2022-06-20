@@ -69,8 +69,12 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
       $group_path = $group->toUrl()->toString();
-      // If we don't start with the group path then add it, else do nothing.
-      if (substr_compare($alias, $group_path, 0, strlen($group_path)) !== 0) {
+      $current_alias_arr = explode('/', $alias);
+      $group_path_arr = explode('/', $group_path);
+      // If we don't start with the group path then add it.
+      // Or if we match the path then prepend the group path, else do nothing.
+      if (strcmp($group_path_arr[1], $current_alias_arr[1]) !== 0
+        || strcmp($group_path, $alias) === 0) {
         /** @var \Drupal\redirect\RedirectRepository $redirects */
         $redirects = \Drupal::service('redirect.repository')
           ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
