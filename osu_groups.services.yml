@@ -1,4 +1,4 @@
 services:
   osu_groups.group_handler:
     class: Drupal\osu_groups\OsuGroupsHandler
-    arguments: [ ]
+    arguments: [ '@entity_type.manager' ]

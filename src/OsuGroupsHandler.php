@@ -2,14 +2,24 @@
 
 namespace Drupal\osu_groups;
 
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\group\Entity\Group;
-use Drupal\group\Entity\GroupContent;
 use Drupal\node\Entity\Node;
 
 /**
  * Provides helper functions to get data about groups.
  */
 class OsuGroupsHandler {
+
+
+  /**
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  public function __construct(EntityTypeManagerInterface $entityTypeManager) {
+    $this->entityTypeManager = $entityTypeManager;
+  }
 
   /**
    * Get the Group name for the given node.
@@ -21,7 +31,9 @@ class OsuGroupsHandler {
    *   The Group Name or null.
    */
   public function getGroupNameFromNode(Node $node) {
-    $group_content = GroupContent::loadByEntity($node);
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content');
+    $group_content = $storage->loadByEntity($node);
     if ($group_content) {
       $group_content = reset($group_content);
       $group = $group_content->getGroup();
@@ -53,7 +65,9 @@ class OsuGroupsHandler {
    *   The Group Content Entity or null.
    */
   public function getGroupContentFromNode(Node $node) {
-    $group_content = GroupContent::loadByEntity($node);
+    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_content');
+    $group_content = $storage->loadByEntity($node);
     if ($group_content) {
       return reset($group_content);
     }
