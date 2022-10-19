@@ -69,6 +69,17 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $context['data']['node'];
     $nid = $node->id();
+    $node_internal_path = "/node/${nid}";
+
+    /** @var \Drupal\path_alias\AliasManager $path_alias_manager */
+    $path_alias_manager = \Drupal::service('path_alias.manager');
+    $existing_alias = $path_alias_manager->getPathByAlias($alias);
+    $is_same_node = FALSE;
+
+    if (strcmp($node_internal_path, $existing_alias) === 0) {
+      $is_same_node = TRUE;
+    }
+
     /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
     $group_handler = \Drupal::service('osu_groups.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
@@ -76,13 +87,29 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
-      $group_path = $group->toUrl()->toString();
+      $group_path = $path_alias_manager->getAliasByPath("/group/" . $group->id());
       $current_alias_arr = explode('/', $alias);
       $group_path_arr = explode('/', $group_path);
       // If we don't start with the group path then add it.
       // Or if we match the path then prepend the group path, else do nothing.
       if (strcmp($group_path_arr[1], $current_alias_arr[1]) !== 0
         || strcmp($group_path, $alias) === 0) {
+        /** @var \Drupal\redirect\RedirectRepository $redirects */
+        $redirects = \Drupal::service('redirect.repository')
+          ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
+        /** @var \Drupal\redirect\Entity\Redirect $redirect */
+        foreach ($redirects as $redirect) {
+          // if redirect starts with our same path and might have a -number on the end
+          // delete the redirect as we probably don't need it.
+          if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
+            redirect_delete_by_path($redirect->getSourceUrl());
+          }
+        }
+        $alias = $group_path . $alias;
+      }
+      // If we happen to have a group inside a page that would be the same alias
+      // as the start of the group we should also put this alias under the group alias.
+      elseif (substr_compare($group_path, $alias, 0, strlen($group_path)) >= 0 && !$is_same_node) {
         /** @var \Drupal\redirect\RedirectRepository $redirects */
         $redirects = \Drupal::service('redirect.repository')
           ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
