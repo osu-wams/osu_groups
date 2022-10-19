@@ -150,7 +150,7 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
     $node_2->setPublished();
     $node_2->save();
 
-    // Crate a group.
+    // Create a group.
     $group = Group::create([
       'title' => 'Digital Experience',
       'type' => 'basic_group',
