@@ -2,14 +2,14 @@ langcode: en
 status: true
 dependencies:
   module:
-    - block_classes
+    - block_class
     - block_visibility_groups
     - group
   theme:
     - madrone
 third_party_settings:
-  block_classes:
-    block_class: 'bg-bucktoothwhite border container px-3 py-2'
+  block_class:
+    classes: 'osu-bg-page-alt-1 border container px-3 py-2'
 id: madrone_groupoperations
 theme: madrone
 region: highlighted
