@@ -337,3 +337,11 @@ function osu_groups_basic_group_update_9004(&$sandbox) {
   $use_toggle_label->save();
   return t('Update field configuration for hide_global_navigation');
 }
+
+/**
+ * Add Role group_content_author.
+ */
+function osu_groups_basic_group_update_9005(&$sandbox) {
+  $install_path = get_module_source_path();
+  Role::create($install_path->read('user.role.group_content_author'))->save();
+}
