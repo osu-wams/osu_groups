@@ -7,12 +7,14 @@ dependencies:
     - core.entity_view_display.node.page.default
     - core.entity_view_display.node.story.default
   module:
+    - contextual
     - layout_builder
 id: group_content_author
 label: 'Group Content Author'
 weight: -7
 is_admin: null
 permissions:
+  - 'access contextual links'
   - 'configure editable basic_group group layout overrides'
   - 'configure editable page node layout overrides'
   - 'configure editable story node layout overrides'

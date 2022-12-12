@@ -345,3 +345,12 @@ function osu_groups_basic_group_update_9005(&$sandbox) {
   $install_path = get_module_source_path();
   Role::create($install_path->read('user.role.group_content_author'))->save();
 }
+
+/**
+ * Add Permission to 'Group Content Author' global role to use contextual links.
+ */
+function osu_groups_basic_group_update_9006(&$sandbox) {
+  $group_content_author = Role::load('group_content_author');
+  $group_content_author->grantPermission('access contextual links');
+  $group_content_author->save();
+}
