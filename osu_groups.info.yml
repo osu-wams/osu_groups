@@ -3,7 +3,7 @@ type: module
 description: Basic Configuration for OSU Groups
 package: OSU
 core_version_requirement: ^9 || ^10
-version: '1.0.5'
+version: '1.0.6'
 dependencies:
   - group:group
   - group:gnode
