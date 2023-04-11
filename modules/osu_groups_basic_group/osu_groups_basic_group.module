@@ -90,6 +90,15 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
       $group_path = $path_alias_manager->getAliasByPath("/group/" . $group->id());
       $current_alias_arr = explode('/', $alias);
       $group_path_arr = explode('/', $group_path);
+      // Create counter to keep track of the group path's repetition in the
+      // current alias.
+      $count_group_alias_in_path = 0;
+      foreach ($current_alias_arr as $current_alias) {
+        if (strcmp($group_path_arr[1], $current_alias) === 0) {
+          $count_group_alias_in_path++;
+        }
+      }
+
       // If we don't start with the group path then add it.
       // Or if we match the path then prepend the group path, else do nothing.
       if (strcmp($group_path_arr[1], $current_alias_arr[1]) !== 0
@@ -109,7 +118,7 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
       }
       // If we happen to have a group inside a page that would be the same alias
       // as the start of the group we should also put this alias under the group alias.
-      elseif (substr_compare($group_path, $alias, 0, strlen($group_path)) >= 0 && !$is_same_node) {
+      elseif ($count_group_alias_in_path < 2 && substr_compare($group_path, $alias, 0, strlen($group_path)) >= 0 && !$is_same_node) {
         /** @var \Drupal\redirect\RedirectRepository $redirects */
         $redirects = \Drupal::service('redirect.repository')
           ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
