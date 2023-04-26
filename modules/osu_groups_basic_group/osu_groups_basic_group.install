@@ -142,19 +142,11 @@ function osu_groups_basic_group_install($is_syncing) {
 
   // Grant Full Group Access to the Architect Role.
   $architect_user_role = Role::load('architect');
-  $architect_user_role->grantPermission('access group overview');
-  $architect_user_role->grantPermission('administer group');
-  $architect_user_role->grantPermission('administer group display');
-  $architect_user_role->grantPermission('administer group fields');
-  $architect_user_role->grantPermission('administer group_content display');
-  $architect_user_role->grantPermission('administer group_content fields');
-  $architect_user_role->grantPermission('administer group_content form display');
-  $architect_user_role->grantPermission('bypass group access');
-  $architect_user_role->grantPermission('create basic_group group');
-  $architect_user_role->grantPermission('configure all basic_group group layout overrides');
-  $architect_user_role->grantPermission('configure editable basic_group group layout overrides');
+  _group_admin_permissions($architect_user_role);
 
-  $architect_user_role->save();
+  // Grant Full Group Access to the Architect Role.
+  $dx_administrator_role = Role::load('dx_administrator');
+  _group_admin_permissions($dx_administrator_role);
 
   $manage_content = Role::load('manage_content');
   $manage_content->grantPermission('configure editable basic_group group layout overrides');
@@ -165,6 +157,30 @@ function osu_groups_basic_group_install($is_syncing) {
   $content_authors->grantPermission('configure editable basic_group group layout overrides');
 
   $content_authors->save();
+}
+
+/**
+ * Assign permissions to the role to manage groups.
+ *
+ * @param \Drupal\user\Entity\Role $role
+ *
+ * @return void
+ * @throws \Drupal\Core\Entity\EntityStorageException
+ */
+function _group_admin_permissions(Role $role): void {
+  $role->grantPermission('access group overview');
+  $role->grantPermission('administer group');
+  $role->grantPermission('administer group display');
+  $role->grantPermission('administer group fields');
+  $role->grantPermission('administer group_content display');
+  $role->grantPermission('administer group_content fields');
+  $role->grantPermission('administer group_content form display');
+  $role->grantPermission('bypass group access');
+  $role->grantPermission('create basic_group group');
+  $role->grantPermission('configure all basic_group group layout overrides');
+  $role->grantPermission('configure editable basic_group group layout overrides');
+
+  $role->save();
 }
 
 /**
