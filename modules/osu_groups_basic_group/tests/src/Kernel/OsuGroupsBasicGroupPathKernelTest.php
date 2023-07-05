@@ -15,10 +15,18 @@ use Drupal\pathauto\PathautoGeneratorInterface;
 use Drupal\system\Entity\Menu;
 use Drupal\Tests\pathauto\Functional\PathautoTestHelperTrait;
 
+/**
+ * Unit Tests for OSU Groups Basic Group.
+ */
 class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
 
   use PathautoTestHelperTrait;
 
+  /**
+   * Modules required to run tests.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'token',
@@ -45,15 +53,22 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
   ];
 
   /**
+   * Pathauto pattern entities.
+   *
    * @var \Drupal\pathauto\PathautoPatternInterface
    */
   protected $nodePattern;
 
   /**
+   * Pathauto pattern entities.
+   *
    * @var \Drupal\pathauto\PathautoPatternInterface
    */
   protected $groupPattern;
 
+  /**
+   * {@inheritDoc}
+   */
   public function setUp(): void {
     parent::setUp();
 
@@ -98,7 +113,7 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
     $group_menu_type->save();
     /** @var \Drupal\group\Entity\Storage\GroupContentTypeStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('group_content_type');
-    // create group content from plugin
+    // Create group content from plugin.
     $storage->createFromPlugin($group_type, 'group_content_menu:group_menu')
       ->save();
     $storage->createFromPlugin($group_type, 'group_node:page', [
@@ -107,7 +122,8 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
       'use_creation_wizard' => FALSE,
     ])->save();
 
-    // Set config for pathauto to create new aliases and delete old ones (Default).
+    // Set config for pathauto to create new aliases
+    // and delete old ones (Default).
     $config = $this->config('pathauto.settings');
     $config->set('update_action', PathautoGeneratorInterface::UPDATE_ACTION_DELETE);
     $config->save();
@@ -124,6 +140,9 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
     $this->setCurrentUser($this->createUser());
   }
 
+  /**
+   * Test the Group Alias generation process.
+   */
   public function testOsuGroupsAlias() {
     // Create first node.
     $node_1 = Node::create([
@@ -159,7 +178,7 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
     $group->setPublished();
 
     $group->save();
-    //Manually set the alias for the group.
+    // Manually set the alias for the group.
     $this->saveEntityAlias($group, '/about-us/dx');
 
     // Add group menu.

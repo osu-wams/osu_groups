@@ -1,4 +1,10 @@
 <?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for OSU Groups.
+ */
+
 /**
  * Implements hook_install().
  */

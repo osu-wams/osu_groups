@@ -51,12 +51,11 @@ class OsuGroupsBasicGroupHandler {
     if ($this->bundleHasField('field_group_landing_page', $group->bundle(), $group->getEntityTypeId())) {
       $group_landing_node_list = $group->get('field_group_landing_page');
       if (count($group_landing_node_list) > 0) {
-        $group_landing_node = $group_landing_node_list
+        return $group_landing_node_list
           ->first()
           ->get('entity')
           ->getTarget()
           ->getValue();
-        return $group_landing_node;
       }
     }
     return NULL;

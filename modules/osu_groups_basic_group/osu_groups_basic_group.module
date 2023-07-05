@@ -1,22 +1,13 @@
 <?php
 
+/**
+ * @file
+ * Main file for OSU Groups: Basic Group.
+ */
+
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
-
-/**
- * Implements hook_form_alter().
- */
-function osu_groups_basic_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if (preg_match('/group_(\w+)_add_form/', $form_id) && array_key_exists('field_group_landing_page', $form)) {
-    $form['field_group_landing_page']['widget'][0]['target_id']['#attributes']['disabled'] = 'disabled';
-    $form['field_group_landing_page']['widget'][0]['target_id']['#description'] = t('This is disabled until your group is created');
-  }
-  if (preg_match('/group_(\w+)_edit_form/', $form_id) && array_key_exists('field_group_landing_page', $form)) {
-    $group_form = $form_state->getFormObject()->getEntity();
-    $form['field_group_landing_page']['widget'][0]['target_id']['#selection_settings']['view']['arguments'][0] = $group_form->id();
-  }
-}
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -30,9 +21,7 @@ function osu_groups_basic_group_preprocess_html(&$variables) {
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
-      /**
-       * On Group Content Pages insert Group name after node name.
-       */
+      // On Group Content Pages insert Group name after node name.
       $group_name = $osu_groups->getGroupnameFromGroup($group);
       $page_title_array = explode(' | ', $variables['head_title']['title']);
       array_splice($page_title_array, 1, 0, $group_name);
@@ -69,7 +58,7 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     /** @var \Drupal\node\Entity\Node $node */
     $node = $context['data']['node'];
     $nid = $node->id();
-    $node_internal_path = "/node/${nid}";
+    $node_internal_path = "/node/$nid";
 
     /** @var \Drupal\path_alias\AliasManager $path_alias_manager */
     $path_alias_manager = \Drupal::service('path_alias.manager');
@@ -83,7 +72,8 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
     /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
     $group_handler = \Drupal::service('osu_groups.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
-    // If node is group content, node is created first, then associated to group thus updating group content.
+    // If node is group content, node is created first,
+    // then associated to group thus updating group content.
     if ($group_content) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
@@ -108,8 +98,8 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
           ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
         /** @var \Drupal\redirect\Entity\Redirect $redirect */
         foreach ($redirects as $redirect) {
-          // if redirect starts with our same path and might have a -number on the end
-          // delete the redirect as we probably don't need it.
+          // If redirect starts with our same path and might have a -number
+          // on the end delete the redirect as we probably don't need it.
           if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
             redirect_delete_by_path($redirect->getSourceUrl());
           }
@@ -117,15 +107,16 @@ function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
         $alias = $group_path . $alias;
       }
       // If we happen to have a group inside a page that would be the same alias
-      // as the start of the group we should also put this alias under the group alias.
+      // as the start of the group we should also put this alias under
+      // the group alias.
       elseif ($count_group_alias_in_path < 2 && substr_compare($group_path, $alias, 0, strlen($group_path)) >= 0 && !$is_same_node) {
         /** @var \Drupal\redirect\RedirectRepository $redirects */
         $redirects = \Drupal::service('redirect.repository')
           ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
         /** @var \Drupal\redirect\Entity\Redirect $redirect */
         foreach ($redirects as $redirect) {
-          // if redirect starts with our same path and might have a -number on the end
-          // delete the redirect as we probably don't need it.
+          // If redirect starts with our same path and might have a -number
+          // on the end delete the redirect as we probably don't need it.
           if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
             redirect_delete_by_path($redirect->getSourceUrl());
           }
@@ -153,9 +144,9 @@ function osu_groups_basic_group_form_node_form_alter(&$form, FormStateInterface 
   /** @var \Drupal\node\Entity\Node $node */
   $node = $form_state->getFormObject()->getEntity();
   // If node is new and created in group context
-  // OR node is a group page and does not have a normal menu entry
+  // OR node is a group page and does not have a normal menu entry.
   if (($form_state->get('group') && $node->isNew())
-    || (!menu_ui_get_menu_link_defaults($node)['id'] && isGroup())) {
+    || (!menu_ui_get_menu_link_defaults($node)['id'] && osu_groups_basic_group_is_group())) {
     $form['menu']['link']['menu_parent']['#default_value'] = 'Group Menu:';
   }
 }
@@ -166,7 +157,7 @@ function osu_groups_basic_group_form_node_form_alter(&$form, FormStateInterface 
  * @return bool
  *   True if current page is a group page.
  */
-function isGroup(): bool {
+function osu_groups_basic_group_is_group(): bool {
   $is_group = FALSE;
 
   if ($node = Drupal::routeMatch()->getParameter('node')) {

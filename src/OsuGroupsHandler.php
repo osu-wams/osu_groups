@@ -13,10 +13,18 @@ class OsuGroupsHandler {
 
 
   /**
+   * The Entity Type manager Service.
+   *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private EntityTypeManagerInterface $entityTypeManager;
 
+  /**
+   * Creates a new OsuGroupsHandler.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The Entity Type manager Service.
+   */
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
@@ -65,6 +73,7 @@ class OsuGroupsHandler {
    *   The Group Content Entity or null.
    */
   public function getGroupContentFromNode(Node $node) {
+    // group_content will be removed in group v3, change to group_relationship.
     /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
     $storage = $this->entityTypeManager->getStorage('group_content');
     $group_content = $storage->loadByEntity($node);
