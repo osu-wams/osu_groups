@@ -7,6 +7,7 @@ dependencies:
 id: basic_group
 label: 'Basic Group'
 description: ''
+new_revision: true
 creator_membership: true
 creator_wizard: false
 creator_roles:
