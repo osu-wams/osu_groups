@@ -377,3 +377,16 @@ function osu_groups_basic_group_update_9006(&$sandbox): void {
   $group_content_author->grantPermission('access contextual links');
   $group_content_author->save();
 }
+
+/**
+ * Add new roles for Groups.
+ */
+function osu_groups_basic_group_update_9007(&$sandbox) {
+  $module_config_path = get_module_source_path();
+  /** @var Drupal\group\Entity\Storage\GroupRoleStorage $group_role_storage */
+  $group_role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
+  $group_role_storage->create($module_config_path->read('group.role.basic_group-dx_administrator'))
+    ->save();
+  $group_role_storage->create($module_config_path->read('group.role.basic_group-architect'))
+    ->save();
+}

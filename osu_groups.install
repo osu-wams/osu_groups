@@ -58,3 +58,12 @@ function osu_groups_update_9001(&$sandbox) {
   $config->set('matchers', $linkit_matchers);
   $config->save();
 }
+
+/**
+ * Add Group Revision Module.
+ */
+function osu_groups_update_9002(&$sandbox) {
+  \Drupal::service('module_installer')->install([
+    'group_support_revisions',
+  ], TRUE);
+}
