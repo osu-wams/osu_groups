@@ -1,4 +1,3 @@
-uuid: 65b54feb-752d-4e5e-b99b-11216f92c9b7
 langcode: en
 status: true
 dependencies:
@@ -6,9 +5,16 @@ dependencies:
     - core.entity_view_display.group.basic_group.default
     - core.entity_view_display.node.page.default
     - core.entity_view_display.node.story.default
+    - filter.format.full_html
+    - media.type.document
+    - media.type.image
+    - media.type.kaltura
+    - media.type.remote_video
   module:
     - contextual
+    - filter
     - layout_builder
+    - media
 id: group_content_author
 label: 'Group Content Author'
 weight: -7
