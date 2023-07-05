@@ -12,9 +12,6 @@ scope: insider
 global_role: authenticated
 group_type: basic_group
 permissions:
-  - 'create group_node:page content'
-  - 'delete own group_node:page content'
-  - 'update own group_node:page content'
   - 'view group'
   - 'view group_node:page content'
   - 'view group_node:page entity'
