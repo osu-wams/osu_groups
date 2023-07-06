@@ -389,4 +389,11 @@ function osu_groups_basic_group_update_9007(&$sandbox) {
     ->save();
   $group_role_storage->create($module_config_path->read('group.role.basic_group-architect'))
     ->save();
+  // Add permission to join groups to outsiders.
+  /** @var Drupal\group\Entity\GroupRole $group_role_outsider */
+  $group_role_outsider = $group_role_storage->load('basic_group-outsider');
+  $group_role_outsider_perms = $group_role_outsider->get('permissions');
+  $group_role_outsider_perms[] = 'join group';
+  $group_role_outsider->set('permissions', $group_role_outsider_perms);
+  $group_role_outsider->save();
 }
