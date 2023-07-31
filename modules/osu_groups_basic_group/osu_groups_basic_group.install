@@ -6,6 +6,9 @@
  */
 
 use Drupal\Core\Config\FileStorage;
+use Drupal\Core\Entity\EntityStorageException;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\Role;
 use Drupal\views\Entity\View;
 
@@ -396,4 +399,66 @@ function osu_groups_basic_group_update_9007(&$sandbox) {
   $group_role_outsider_perms[] = 'join group';
   $group_role_outsider->set('permissions', $group_role_outsider_perms);
   $group_role_outsider->save();
+}
+
+/**
+ * Implements hook_update_N().
+ */
+function osu_groups_basic_group_update_9008(&$sandbox) {
+  $module_config_path = get_module_source_path();
+
+  // Creating field storages.
+  try {
+    FieldStorageConfig::create($module_config_path->read('field.storage.group.field_osu_group_meta_description'))
+      ->save();
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('osu_groups_basic_group')->error($e->getMessage());
+  }
+  try {
+    FieldStorageConfig::create($module_config_path->read('field.storage.group.field_osu_group_meta_image'))
+      ->save();
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('osu_groups_basic_group')->error($e->getMessage());
+  }
+
+  // Attaching fields to Group nodes.
+  try {
+    FieldConfig::create($module_config_path->read('field.field.group.basic_group.field_osu_group_meta_description'))
+      ->save();
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('osu_groups_basic_group')->error($e->getMessage());
+  }
+  try {
+    FieldConfig::create($module_config_path->read('field.field.group.basic_group.field_osu_group_meta_image'))
+      ->save();
+  }
+  catch (EntityStorageException $e) {
+    \Drupal::logger('osu_groups_basic_group')->error($e->getMessage());
+  }
+  /** @var \Drupal\Core\Config\CachedStorage $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+  $group_form_display = $config_storage->read('core.entity_form_display.group.basic_group.default');
+  $existing_group_form_display = $module_config_path->read('core.entity_form_display.group.basic_group.default');
+  $existing_group_form_display['content'] = array_merge($group_form_display['content'], $existing_group_form_display['content']);
+  $config_storage->write('core.entity_form_display.group.basic_group.default', $existing_group_form_display);
+  $existing_group_view_display = $config_storage->read('core.entity_view_display.group.basic_group.default');
+  unset($existing_group_view_display['content']['field_osu_group_meta_description']);
+  unset($existing_group_view_display['content']['field_osu_group_meta_image']);
+  $existing_group_view_display['hidden']['field_osu_group_meta_description'] = TRUE;
+  $existing_group_view_display['hidden']['field_osu_group_meta_image'] = TRUE;
+  $config_storage->write('core.entity_view_display.group.basic_group.default', $existing_group_view_display);
+
+  $group_metatag_defaults = $config_storage->read('metatag.metatag_defaults.group');
+  if ($group_metatag_defaults === FALSE) {
+    $config_storage->write('metatag.metatag_defaults.group', $module_config_path->read('metatag.metatag_defaults.group'));
+  }
+  else {
+    $new_metatag_defaults = $module_config_path->read('metatag.metatag_defaults.group');
+    $group_metatag_defaults['tags'] = array_merge($new_metatag_defaults['tags'], $group_metatag_defaults['tags']);
+    $config_storage->write('metatag.metatag_defaults.group', $group_metatag_defaults);
+  }
+  return t('Updated group entities to now have Meatag Fields.');
 }
