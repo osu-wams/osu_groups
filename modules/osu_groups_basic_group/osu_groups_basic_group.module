@@ -8,6 +8,7 @@
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\osu_groups_basic_group\OsuGroupsBasicGroupSystemBrandingBlockAlter;
+use Drupal\pathauto\PathautoPatternInterface;
 
 /**
  * Implements hook_preprocess_HOOK().
@@ -45,83 +46,40 @@ function osu_groups_basic_group_preprocess_menu__group_menu(&$variables) {
 function osu_groups_basic_group_preprocess_page_title(&$variables) {
   // If we are on a group entity and on the display of it, hide the title.
   if (\Drupal::routeMatch()->getParameter('group') && \Drupal::routeMatch()
-      ->getRouteName() === 'entity.group.canonical') {
+    ->getRouteName() === 'entity.group.canonical') {
     $variables['title_attributes']['class'][] = "hidden";
   }
 }
 
 /**
- * Implements hook_pathauto_alias_alter().
+ * Implements hook_pathauto_pattern_alter().
+ *
+ * Using Patch from https://www.drupal.org/project/group/issues/2774827
+ *
+ * Update pages added to a group not in a menu with
+ *   "/[node:group:url:path]/[node:title]"
+ *
+ * Update pages that are in the Group menu and are the top level link with
+ *   "/[node:group:url:path]/[node:title]"
  */
-function osu_groups_basic_group_pathauto_alias_alter(&$alias, array &$context) {
-  if ($context['module'] === 'node') {
-    /** @var \Drupal\node\Entity\Node $node */
+function osu_groups_basic_group_pathauto_pattern_alter(PathautoPatternInterface $pattern, array $context) {
+  if ($context['module'] === 'node' && $context['op'] == 'update') {
     $node = $context['data']['node'];
-    $nid = $node->id();
-    $node_internal_path = "/node/$nid";
-
-    /** @var \Drupal\path_alias\AliasManager $path_alias_manager */
-    $path_alias_manager = \Drupal::service('path_alias.manager');
-    $existing_alias = $path_alias_manager->getPathByAlias($alias);
-    $is_same_node = FALSE;
-
-    if (strcmp($node_internal_path, $existing_alias) === 0) {
-      $is_same_node = TRUE;
-    }
-
     /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
     $group_handler = \Drupal::service('osu_groups.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
-    // If node is group content, node is created first,
-    // then associated to group thus updating group content.
     if ($group_content) {
-      /** @var \Drupal\group\Entity\Group $group */
-      $group = $group_content->getGroup();
-      $group_path = $path_alias_manager->getAliasByPath("/group/" . $group->id());
-      $current_alias_arr = explode('/', $alias);
-      $group_path_arr = explode('/', $group_path);
-      // Create counter to keep track of the group path's repetition in the
-      // current alias.
-      $count_group_alias_in_path = 0;
-      foreach ($current_alias_arr as $current_alias) {
-        if (strcmp($group_path_arr[1], $current_alias) === 0) {
-          $count_group_alias_in_path++;
-        }
+      $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+      $menu_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $node->id()]);
+      if (empty($menu_links)) {
+        $pattern->setPattern("/[node:group:url:path]/[node:title]");
       }
-
-      // If we don't start with the group path then add it.
-      // Or if we match the path then prepend the group path, else do nothing.
-      if (strcmp($group_path_arr[1], $current_alias_arr[1]) !== 0
-        || strcmp($group_path, $alias) === 0) {
-        /** @var \Drupal\redirect\RedirectRepository $redirects */
-        $redirects = \Drupal::service('redirect.repository')
-          ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
-        /** @var \Drupal\redirect\Entity\Redirect $redirect */
-        foreach ($redirects as $redirect) {
-          // If redirect starts with our same path and might have a -number
-          // on the end delete the redirect as we probably don't need it.
-          if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
-            redirect_delete_by_path($redirect->getSourceUrl());
-          }
+      else {
+        $menu_link = reset($menu_links);
+        $parent = $menu_link->getParent();
+        if (empty($parent)) {
+          $pattern->setPattern("/[node:group:url:path]/[node:title]");
         }
-        $alias = $group_path . $alias;
-      }
-      // If we happen to have a group inside a page that would be the same alias
-      // as the start of the group we should also put this alias under
-      // the group alias.
-      elseif ($count_group_alias_in_path < 2 && substr_compare($group_path, $alias, 0, strlen($group_path)) >= 0 && !$is_same_node) {
-        /** @var \Drupal\redirect\RedirectRepository $redirects */
-        $redirects = \Drupal::service('redirect.repository')
-          ->findByDestinationUri(["internal:/node/$nid", "entity:node/$nid"]);
-        /** @var \Drupal\redirect\Entity\Redirect $redirect */
-        foreach ($redirects as $redirect) {
-          // If redirect starts with our same path and might have a -number
-          // on the end delete the redirect as we probably don't need it.
-          if (substr_compare($redirect->getSourceUrl(), $alias, 0, strlen($alias)) <= 0) {
-            redirect_delete_by_path($redirect->getSourceUrl());
-          }
-        }
-        $alias = $group_path . $alias;
       }
     }
   }
