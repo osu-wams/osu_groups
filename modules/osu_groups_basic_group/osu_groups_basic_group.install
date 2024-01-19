@@ -462,3 +462,13 @@ function osu_groups_basic_group_update_9008(&$sandbox) {
   }
   return t('Updated group entities to now have Meatag Fields.');
 }
+
+/**
+ * Set the new group global setting for auto node title.
+ */
+function osu_groups_basic_group_update_9009(&$sandbox) {
+  Drupal::configFactory()
+    ->getEditable('group.settings')
+    ->set('osu_groups_page_title', TRUE)
+    ->save();
+}
