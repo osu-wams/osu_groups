@@ -14,12 +14,14 @@ use Drupal\pathauto\PathautoPatternInterface;
  * Implements hook_preprocess_HOOK().
  */
 function osu_groups_basic_group_preprocess_html(&$variables) {
-  if ($node = \Drupal::routeMatch()->getParameter('node')) {
+  if ($node = Drupal::routeMatch()->getParameter('node')) {
     /** @var \Drupal\osu_groups\OsuGroupsHandler $osu_groups */
-    $osu_groups = \Drupal::service('osu_groups.group_handler');
+    $osu_groups = Drupal::service('osu_groups.group_handler');
 
     $group_content = $osu_groups->getGroupContentFromNode($node);
-    if ($group_content) {
+    $group_node_auto_title = Drupal::configFactory()
+      ->getEditable('group.settings')->get('osu_groups_page_title');
+    if ($group_content && $group_node_auto_title) {
       /** @var \Drupal\group\Entity\Group $group */
       $group = $group_content->getGroup();
       // On Group Content Pages insert Group name after node name.
@@ -45,7 +47,7 @@ function osu_groups_basic_group_preprocess_menu__group_menu(&$variables) {
  */
 function osu_groups_basic_group_preprocess_page_title(&$variables) {
   // If we are on a group entity and on the display of it, hide the title.
-  if (\Drupal::routeMatch()->getParameter('group') && \Drupal::routeMatch()
+  if (Drupal::routeMatch()->getParameter('group') && Drupal::routeMatch()
     ->getRouteName() === 'entity.group.canonical') {
     $variables['title_attributes']['class'][] = "hidden";
   }
@@ -66,10 +68,10 @@ function osu_groups_basic_group_pathauto_pattern_alter(PathautoPatternInterface 
   if ($context['module'] === 'node' && $context['op'] == 'update') {
     $node = $context['data']['node'];
     /** @var \Drupal\osu_groups\OsuGroupsHandler $group_handler */
-    $group_handler = \Drupal::service('osu_groups.group_handler');
+    $group_handler = Drupal::service('osu_groups.group_handler');
     $group_content = $group_handler->getGroupContentFromNode($node);
     if ($group_content) {
-      $menu_link_manager = \Drupal::service('plugin.manager.menu.link');
+      $menu_link_manager = Drupal::service('plugin.manager.menu.link');
       $menu_links = $menu_link_manager->loadLinksByRoute('entity.node.canonical', ['node' => $node->id()]);
       if (empty($menu_links)) {
         $pattern->setPattern("/[node:group:url:path]/[node:title]");
@@ -119,7 +121,7 @@ function osu_groups_basic_group_is_group(): bool {
   $is_group = FALSE;
 
   if ($node = Drupal::routeMatch()->getParameter('node')) {
-    $osu_groups = \Drupal::service('osu_groups.group_handler');
+    $osu_groups = Drupal::service('osu_groups.group_handler');
     $group_content = $osu_groups->getGroupContentFromNode($node);
     if ($group_content) {
       $is_group = TRUE;
@@ -127,4 +129,30 @@ function osu_groups_basic_group_is_group(): bool {
   }
 
   return $is_group;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function osu_groups_basic_group_form_group_settings_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $form['osu_groups_page_title'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Automatically add the Group name to the Page title'),
+    '#default_value' => Drupal::config('group.settings')
+      ->get('osu_groups_page_title'),
+    '#description' => t('Automatically have the group name added to the Page title.'),
+  ];
+  // Add a custom submit handler to save the setting.
+  $form['#submit'][] = 'osu_groups_basic_group_group_settings_submit';
+  return $form;
+}
+
+/**
+ * Submit handler for the form.
+ */
+function osu_groups_basic_group_group_settings_submit($form, FormStateInterface $form_state) {
+  Drupal::configFactory()
+    ->getEditable('group.settings')
+    ->set('osu_groups_page_title', $form_state->getValue('osu_groups_page_title'))
+    ->save();
 }
