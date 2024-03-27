@@ -12,6 +12,7 @@ dependencies:
     - media.type.remote_video
   module:
     - contextual
+    - dropzonejs
     - filter
     - layout_builder
     - media
@@ -34,6 +35,7 @@ permissions:
   - 'delete own image media'
   - 'delete own kaltura media'
   - 'delete own remote_video media'
+  - 'dropzone upload files'
   - 'edit own document media'
   - 'edit own image media'
   - 'edit own kaltura media'
