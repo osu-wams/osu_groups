@@ -472,3 +472,19 @@ function osu_groups_basic_group_update_9009(&$sandbox) {
     ->set('osu_groups_page_title', TRUE)
     ->save();
 }
+
+/**
+ * Grant 'dropzone upload files' permission to 'group_content_author' role.
+ */
+function osu_groups_basic_group_update_9010(&$sandbox) {
+  $role_id = 'group_content_author';
+  // Check if the role exists before assigning permission to it.
+  if ($role = Role::load($role_id)) {
+    $role->grantPermission('dropzone upload files');
+    $role->save();
+
+    return t('Updated role %role_id and granted permission.', ['%role_id' => $role_id]);
+  }
+
+  return t('Role %role_id does not exist.', ['%role_id' => $role_id]);
+}
