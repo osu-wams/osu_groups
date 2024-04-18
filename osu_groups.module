@@ -9,6 +9,17 @@ use Drupal\Core\Url;
  * Most of this code was taken from the Drupal Redirect module.
  */
 function osu_groups_form_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  // Theme Form options if drupal.org/i/3441929 is closed
+  //  $form['#theme'] = ['group_edit_form'];
+  //  $form['#attached']['library'][] = 'claro/node-form';
+  //  $form['advanced']['#type'] = 'container';
+  //  $form['advanced']['#accordion'] = TRUE;
+  //  $form['meta']['#type'] = 'container';
+  //  $form['meta']['#access'] = TRUE;
+  //  $form['revision_information']['#type'] = 'container';
+  //  $form['revision_information']['#group'] = 'meta';
+  //  $form['revision_information']['#attributes']['class'][] = 'entity-meta__revision';
+
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $form_state->getFormObject()->getEntity();
   // Ensure that we are not on a New group and that the user has the correct permission.
