@@ -29,22 +29,44 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
       if ($group_content) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
         $group = $group_content->getGroup();
-        // Set the group name in the site branding block.
-        $build['content']['group_name']['#markup'] = $group_name;
-        $group_link = $group->toUrl()->toString();
-        // Set the path for the site branding block.
-        $build['content']['group_path']['#uri'] = $group_link;
-
+        // Set the group name, path in the site branding block.
+        $build['content']['group_name_link'] = [
+          '#type' => 'link',
+          '#title' => $group_name,
+          '#url' => $group->toUrl(),
+          '#attributes' => [
+            'class' => [
+              'site-name__group-link',
+              'text-decoration-none',
+              'osu-text-osuorange',
+              'fw-bolder',
+            ],
+          ],
+        ];
       }
     }
-    // For Group Entities Only.
+    // For Group Entities Only we return an H1 as the current theme shows this
+    // in the header block.
     elseif ($group = \Drupal::routeMatch()->getParameter('group')) {
       $group_name = $osu_groups->getGroupnameFromGroup($group);
-      // Set the group name in the site branding block.
-      $build['content']['group_name']['#markup'] = $group_name;
-      $group_link = $group->toUrl()->toString();
-      // Set the path for the site branding block.
-      $build['content']['group_path']['#uri'] = $group_link;
+      // Set the group name, path in the site branding block.
+      $build['content']['group_name_link'] = [
+        '#type' => 'link',
+        '#title' => [
+          '#type' => 'html_tag',
+          '#tag' => 'h1',
+          '#value' => $group_name,
+        ],
+        '#attributes' => [
+          'class' => [
+            'site-name__group-link',
+            'text-decoration-none',
+            'osu-text-osuorange',
+            'fw-bolder',
+          ],
+        ],
+        '#url' => $group->toUrl(),
+      ];
     }
     return $build;
   }
