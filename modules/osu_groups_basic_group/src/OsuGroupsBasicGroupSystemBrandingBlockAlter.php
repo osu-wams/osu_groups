@@ -60,6 +60,7 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
         '#attributes' => [
           'class' => [
             'site-name__group-link',
+            'site-name__group-front',
             'text-decoration-none',
             'osu-text-osuorange',
             'fw-bolder',
