@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Module file for the OSU Groups module.
+ */
+
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 
@@ -9,28 +14,30 @@ use Drupal\Core\Url;
  * Most of this code was taken from the Drupal Redirect module.
  */
 function osu_groups_form_group_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  // Theme Form options if drupal.org/i/3441929 is closed
-  //  $form['#theme'] = ['group_edit_form'];
-  //  $form['#attached']['library'][] = 'claro/node-form';
-  //  $form['advanced']['#type'] = 'container';
-  //  $form['advanced']['#accordion'] = TRUE;
-  //  $form['meta']['#type'] = 'container';
-  //  $form['meta']['#access'] = TRUE;
-  //  $form['revision_information']['#type'] = 'container';
-  //  $form['revision_information']['#group'] = 'meta';
-  //  $form['revision_information']['#attributes']['class'][] = 'entity-meta__revision';
-
+  // phpcs:disable
+  /* Theme Form options if drupal.org/i/3441929 is closed
+  $form['#theme'] = ['group_edit_form'];
+  $form['#attached']['library'][] = 'claro/node-form';
+  $form['advanced']['#type'] = 'container';
+  $form['advanced']['#accordion'] = TRUE;
+  $form['meta']['#type'] = 'container';
+  $form['meta']['#access'] = TRUE;
+  $form['revision_information']['#type'] = 'container';
+  $form['revision_information']['#group'] = 'meta';
+  $form['revision_information']['#attributes']['class'][] = 'entity-meta__revision';
+   */
+  // phpcs:enable
   /** @var \Drupal\group\Entity\GroupInterface $group */
   $group = $form_state->getFormObject()->getEntity();
-  // Ensure that we are not on a New group and that the user has the correct permission.
+  // Ensure that we are not on a New group and that the user has the correct
+  // permission.
   if (!$group->isNew() && \Drupal::currentUser()
       ->hasPermission('administer redirects')) {
     $gid = $group->id();
     // Find redirects to this group.
     $redirects = \Drupal::service('redirect.repository')
-      ->findByDestinationUri(["internal:/group/$gid", "entity:group/$gid"]);
+    ->findByDestinationUri(["internal:/group/$gid", "entity:group/$gid"]);
     // Assemble the rows for the table.
-
     $rows = [];
     /** @var \Drupal\Core\Entity\EntityListBuilder $list_builder */
     $list_builder = \Drupal::service('entity_type.manager')
@@ -54,7 +61,7 @@ function osu_groups_form_group_form_alter(&$form, FormStateInterface $form_state
     }
     // Add the list to the vertical tabs section of the form.
     $header = [
-      ['class' => ['redirect-table__path'], 'data' => t('From'),],
+      ['class' => ['redirect-table__path'], 'data' => t('From')],
       ['class' => ['redirect-table__operations'], 'data' => t('Operations')],
     ];
 
@@ -102,7 +109,5 @@ function osu_groups_form_group_form_alter(&$form, FormStateInterface $form_state
         'target' => '_blank',
       ],
     ];
-
   }
 }
-
