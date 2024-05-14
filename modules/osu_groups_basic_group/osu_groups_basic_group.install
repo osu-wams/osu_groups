@@ -5,8 +5,10 @@
  * Provides Install, Uninstall and Update functions.
  */
 
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\user\Entity\Role;
@@ -15,7 +17,7 @@ use Drupal\views\Entity\View;
 /**
  * Implements hook_install().
  */
-function osu_groups_basic_group_install($is_syncing) {
+function osu_groups_basic_group_install($is_syncing): void {
   $form_display = \Drupal::entityTypeManager()
     ->getStorage('entity_form_display')
     ->load('node.page.default');
@@ -193,7 +195,7 @@ function _group_admin_permissions(Role $role): void {
 /**
  * Update with new hide_main_navigation field.
  */
-function osu_groups_basic_group_update_9001() {
+function osu_groups_basic_group_update_9001(): void {
   $source = get_module_source_path();
 
   // Obtain the storage manager for field storage bases
@@ -219,7 +221,7 @@ function osu_groups_basic_group_update_9001() {
 /**
  * Add VBO field to group node view.
  */
-function osu_groups_basic_group_update_9002(&$sandbox) {
+function osu_groups_basic_group_update_9002(&$sandbox): FormattableMarkup|TranslatableMarkup {
   // VBO field information for this specific Group Nodes view.
   $nodes_vbo_operations_field = [
     "id" => "views_bulk_operations_bulk_form",
@@ -325,7 +327,7 @@ function osu_groups_basic_group_update_9002(&$sandbox) {
 /**
  * Add use_admin_theme to group views.
  */
-function osu_groups_basic_group_update_9003(&$sandbox) {
+function osu_groups_basic_group_update_9003(&$sandbox): FormattableMarkup|TranslatableMarkup {
   $group_nodes_view = View::load('group_nodes');
   $group_nodes_view_display = $group_nodes_view->get('display');
   $group_nodes_view_display['page_1']['display_options']['use_admin_theme'] = TRUE;
@@ -355,7 +357,7 @@ function get_module_source_path(): FileStorage {
 /**
  * Update field label and description for the global nav toggle.
  */
-function osu_groups_basic_group_update_9004(&$sandbox) {
+function osu_groups_basic_group_update_9004(&$sandbox): FormattableMarkup|TranslatableMarkup {
   $config_factory = \Drupal::configFactory();
   $use_toggle_label = $config_factory->getEditable('field.field.group.basic_group.field_hide_global_navigation');
   $use_toggle_label->set('label', 'Use Group Menu');
@@ -384,7 +386,7 @@ function osu_groups_basic_group_update_9006(&$sandbox): void {
 /**
  * Add new roles for Groups.
  */
-function osu_groups_basic_group_update_9007(&$sandbox) {
+function osu_groups_basic_group_update_9007(&$sandbox): void {
   $module_config_path = get_module_source_path();
   /** @var Drupal\group\Entity\Storage\GroupRoleStorage $group_role_storage */
   $group_role_storage = \Drupal::entityTypeManager()->getStorage('group_role');
@@ -404,7 +406,7 @@ function osu_groups_basic_group_update_9007(&$sandbox) {
 /**
  * Implements hook_update_N().
  */
-function osu_groups_basic_group_update_9008(&$sandbox) {
+function osu_groups_basic_group_update_9008(&$sandbox): FormattableMarkup|TranslatableMarkup {
   $module_config_path = get_module_source_path();
 
   // Creating field storages.
@@ -466,7 +468,7 @@ function osu_groups_basic_group_update_9008(&$sandbox) {
 /**
  * Set the new group global setting for auto node title.
  */
-function osu_groups_basic_group_update_9009(&$sandbox) {
+function osu_groups_basic_group_update_9009(&$sandbox): void {
   Drupal::configFactory()
     ->getEditable('group.settings')
     ->set('osu_groups_page_title', TRUE)
@@ -476,7 +478,7 @@ function osu_groups_basic_group_update_9009(&$sandbox) {
 /**
  * Grant 'dropzone upload files' permission to 'group_content_author' role.
  */
-function osu_groups_basic_group_update_9010(&$sandbox) {
+function osu_groups_basic_group_update_9010(&$sandbox): FormattableMarkup|TranslatableMarkup {
   $role_id = 'group_content_author';
   // Check if the role exists before assigning permission to it.
   if ($role = Role::load($role_id)) {

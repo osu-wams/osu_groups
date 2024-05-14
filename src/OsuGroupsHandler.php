@@ -38,8 +38,8 @@ class OsuGroupsHandler {
    * @return string|null
    *   The Group Name or null.
    */
-  public function getGroupNameFromNode(Node $node) {
-    /** @var \Drupal\group\Entity\Storage\GroupContentStorageInterface $storage */
+  public function getGroupNameFromNode(Node $node): ?string {
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipStorage $storage */
     $storage = $this->entityTypeManager->getStorage('group_content');
     $group_content = $storage->loadByEntity($node);
     if ($group_content) {
@@ -58,6 +58,7 @@ class OsuGroupsHandler {
    *
    * @return string
    *   The String representing the Groups Name.
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
   public function getGroupnameFromGroup(Group $group): string {
     return $group->get('label')->first()->getValue()['value'];

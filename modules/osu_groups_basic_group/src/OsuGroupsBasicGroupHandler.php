@@ -5,6 +5,7 @@ namespace Drupal\osu_groups_basic_group;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\group\Entity\Group;
+use Drupal\node\Entity\Node;
 
 /**
  * Provides helper functions to get data about basic groups.
@@ -46,8 +47,9 @@ class OsuGroupsBasicGroupHandler {
    *
    * @return \Drupal\node\Entity\Node|null
    *   The Node representing the lading page or null.
+   * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    */
-  public function getGroupLandingNode(Group $group) {
+  public function getGroupLandingNode(Group $group): ?Node {
     if ($this->bundleHasField('field_group_landing_page', $group->bundle(), $group->getEntityTypeId())) {
       $group_landing_node_list = $group->get('field_group_landing_page');
       if (count($group_landing_node_list) > 0) {
@@ -59,28 +61,6 @@ class OsuGroupsBasicGroupHandler {
       }
     }
     return NULL;
-  }
-
-  /**
-   * Check if the given field exists in the given entity.
-   *
-   * @param string $field_name
-   *   The filed name to check.
-   * @param string $entity_type
-   *   The entity type to look at.
-   *
-   * @return bool
-   *   A boolean TRUE if the field is in the entity type; otherwise, FALSE;
-   */
-  public function entityTypeHasField($field_name, $entity_type = 'node'): bool {
-    $bundles = $this->bundleInfo->getBundleInfo($entity_type);
-    foreach ($bundles as $bundle => $label) {
-      $all_bundle_fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $bundle);
-      if (isset($all_bundle_fields[$field_name])) {
-        return TRUE;
-      }
-    }
-    return FALSE;
   }
 
   /**
@@ -96,10 +76,32 @@ class OsuGroupsBasicGroupHandler {
    * @return bool
    *   A Boolean True if the field is in the bundle type; otherwise, FALSE.
    */
-  public function bundleHasField($field_name, $bundle = 'page', $entity_type = 'node'): bool {
+  public function bundleHasField(string $field_name, string $bundle = 'page', string $entity_type = 'node'): bool {
     $all_bundle_fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $bundle);
     if (isset($all_bundle_fields[$field_name])) {
       return TRUE;
+    }
+    return FALSE;
+  }
+
+  /**
+   * Check if the given field exists in the given entity.
+   *
+   * @param string $field_name
+   *   The filed name to check.
+   * @param string $entity_type
+   *   The entity type to look at.
+   *
+   * @return bool
+   *   A boolean TRUE if the field is in the entity type; otherwise, FALSE;
+   */
+  public function entityTypeHasField(string $field_name, string $entity_type = 'node'): bool {
+    $bundles = $this->bundleInfo->getBundleInfo($entity_type);
+    foreach ($bundles as $bundle => $label) {
+      $all_bundle_fields = $this->entityFieldManager->getFieldDefinitions($entity_type, $bundle);
+      if (isset($all_bundle_fields[$field_name])) {
+        return TRUE;
+      }
     }
     return FALSE;
   }

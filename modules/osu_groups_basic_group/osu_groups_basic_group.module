@@ -30,7 +30,6 @@ function osu_groups_basic_group_preprocess_html(&$variables) {
       array_splice($page_title_array, 1, 0, $group_name);
       $variables['head_title']['title'] = implode(' | ', $page_title_array);
     }
-
   }
 }
 
@@ -48,7 +47,7 @@ function osu_groups_basic_group_preprocess_menu__group_menu(&$variables) {
 function osu_groups_basic_group_preprocess_page_title(&$variables) {
   // If we are on a group entity and on the display of it, hide the title.
   if (Drupal::routeMatch()->getParameter('group') && Drupal::routeMatch()
-    ->getRouteName() === 'entity.group.canonical') {
+      ->getRouteName() === 'entity.group.canonical') {
     $variables['title_attributes']['class'][] = "hidden";
   }
 }
