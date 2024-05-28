@@ -56,6 +56,11 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
           '#type' => 'html_tag',
           '#tag' => 'h1',
           '#value' => $group_name,
+          '#attributes' => [
+            'class' => [
+              'site-name__group-link__heading'
+            ],
+          ],
         ],
         '#attributes' => [
           'class' => [
