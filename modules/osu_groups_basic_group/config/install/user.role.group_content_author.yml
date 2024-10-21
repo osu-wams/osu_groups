@@ -5,7 +5,6 @@ dependencies:
   config:
     - core.entity_view_display.group.basic_group.default
     - core.entity_view_display.node.page.default
-    - core.entity_view_display.node.story.default
     - filter.format.full_html
     - media.type.document
     - media.type.image
@@ -32,7 +31,6 @@ permissions:
   - 'administer nodes'
   - 'configure editable basic_group group layout overrides'
   - 'configure editable page node layout overrides'
-  - 'configure editable story node layout overrides'
   - 'create and edit custom blocks'
   - 'create document media'
   - 'create image media'
