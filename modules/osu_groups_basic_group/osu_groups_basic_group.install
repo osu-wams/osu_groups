@@ -157,15 +157,10 @@ function osu_groups_basic_group_install($is_syncing): void {
   $dx_administrator_role = Role::load('dx_administrator');
   _group_admin_permissions($dx_administrator_role);
 
-  $manage_content = Role::load('manage_content');
-  $manage_content->grantPermission('configure editable basic_group group layout overrides');
-
-  $manage_content->save();
-
-  $content_authors = Role::load('content_authors');
-  $content_authors->grantPermission('configure editable basic_group group layout overrides');
-
-  $content_authors->save();
+  foreach (Role::loadMultiple(['manage_content', 'content_authors']) as $role) {
+    $role->grantPermission('configure editable basic_group group layout overrides');
+    $role->save();
+  }
 }
 
 /**
