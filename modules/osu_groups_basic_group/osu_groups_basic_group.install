@@ -522,7 +522,9 @@ function osu_groups_basic_group_update_10001(&$sandbox): TranslatableMarkup {
  * Internal function.
  *
  * @param array $permissions
+ *   Permissions to grant.
  * @param string $role
+ *   Role to grant permissions to.
  *
  * @return void
  *
