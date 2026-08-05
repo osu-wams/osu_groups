@@ -1,4 +1,8 @@
 services:
+  _defaults:
+    autowire: true
   osu_groups.group_handler:
     class: Drupal\osu_groups\OsuGroupsHandler
     arguments: [ '@entity_type.manager' ]
+  Drupal\osu_groups\Hook\OsuGroupsFormHooks:
+    class: Drupal\osu_groups\Hook\OsuGroupsFormHooks
