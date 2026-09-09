@@ -4,5 +4,8 @@ services:
   osu_groups.group_handler:
     class: Drupal\osu_groups\OsuGroupsHandler
     arguments: [ '@entity_type.manager' ]
+
+  Drupal\osu_groups\OsuGroupsHandler:
+    alias: osu_groups.group_handler
   Drupal\osu_groups\Hook\OsuGroupsFormHooks:
     class: Drupal\osu_groups\Hook\OsuGroupsFormHooks
