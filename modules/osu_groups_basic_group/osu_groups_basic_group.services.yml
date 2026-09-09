@@ -1,4 +1,12 @@
 services:
+  _defaults:
+    autowire: true
   osu_groups_basic_group.group_handler:
     class: Drupal\osu_groups_basic_group\OsuGroupsBasicGroupHandler
     arguments: [ '@entity_type.bundle.info', '@entity_field.manager' ]
+  Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupThemeHooks:
+    class: Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupThemeHooks
+  Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupFormHooks:
+    class: Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupFormHooks
+  Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupPathautoHooks:
+    class: Drupal\osu_groups_basic_group\Hook\OsuGroupsBasicGroupPathautoHooks

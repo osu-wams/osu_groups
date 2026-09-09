@@ -105,7 +105,7 @@ class GroupMakeNodeContent extends RulesActionBase implements ContainerFactoryPl
     try {
       $groupStorage = $this->entityTypeManager->getStorage('group');
     }
-    catch (InvalidPluginDefinitionException|PluginNotFoundException $e) {
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       $logger->error('Failed to load group storage: @message', [
         '@message' => $e->getMessage(),
       ]);
