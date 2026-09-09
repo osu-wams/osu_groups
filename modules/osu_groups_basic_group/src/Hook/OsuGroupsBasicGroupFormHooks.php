@@ -7,11 +7,14 @@ namespace Drupal\osu_groups_basic_group\Hook;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
- *
+ * Basic Group Form Hooks.
  */
 class OsuGroupsBasicGroupFormHooks {
+
+  use StringTranslationTrait;
 
   public function __construct(
     protected readonly ConfigFactoryInterface $configFactory,
@@ -24,9 +27,9 @@ class OsuGroupsBasicGroupFormHooks {
   public function groupSettingsFormAlter(&$form, FormStateInterface $form_state, $form_id) {
     $form['osu_groups_page_title'] = [
       '#type' => 'checkbox',
-      '#title' => t('Automatically add the Group name to the Page title'),
+      '#title' => $this->t('Automatically add the Group name to the Page title'),
       '#default_value' => $this->configFactory->get('group.settings')->get('osu_groups_page_title'),
-      '#description' => t('Automatically have the group name added to the Page title.'),
+      '#description' => $this->t('Automatically have the group name added to the Page title.'),
     ];
     // Add a custom submit handler to save the setting.
     $form['#submit'][] = 'osu_groups_basic_group_group_settings_submit';
