@@ -11,7 +11,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\osu_groups\OsuGroupsHandler;
 
 /**
- * OSU Groups Basic Group Hooks.
+ * OSU Groups Basic Group Theme Hooks.
  */
 class OsuGroupsBasicGroupThemeHooks {
 

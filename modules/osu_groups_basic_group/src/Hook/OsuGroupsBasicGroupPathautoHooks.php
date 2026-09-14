@@ -10,7 +10,7 @@ use Drupal\osu_groups\OsuGroupsHandler;
 use Drupal\pathauto\PathautoPatternInterface;
 
 /**
- *
+ * Basic Group Pathauto Hooks.
  */
 class OsuGroupsBasicGroupPathautoHooks {
 
@@ -32,7 +32,7 @@ class OsuGroupsBasicGroupPathautoHooks {
    */
   #[Hook('pathauto_pattern_alter')]
   public function pathautoPatternAlter(PathautoPatternInterface $pattern, array $context) {
-    if ($context['module'] === 'node' && $context['op'] === 'update') {
+    if ($context['module'] === 'node' && ($context['op'] === 'update' || $context['op'] === 'bulkupdate')) {
       $node = $context['data']['node'];
       $group_content = $this->osuGroupsHandler->getGroupContentFromNode($node);
 
