@@ -1,8 +1,11 @@
-uuid: a152a426-7ab0-445d-95f1-777ffe74ada1
 langcode: en
 status: true
 dependencies:
   config:
+    - block_content.type.basic
+    - block_content.type.osu_accordion
+    - block_content.type.osu_card
+    - block_content.type.osu_menu_bar_item
     - core.entity_view_display.group.basic_group.default
     - core.entity_view_display.node.page.default
     - filter.format.full_html
@@ -11,45 +14,74 @@ dependencies:
     - media.type.kaltura
     - media.type.remote_video
   module:
+    - block_content
     - contextual
     - dropzonejs
     - editoria11y
+    - file
     - filter
+    - group
     - layout_builder
+    - layout_builder_component_attributes
     - media
     - node
     - path
+    - section_library
     - system
+    - toc_js_per_node
 id: group_content_author
 label: 'Group Content Author'
 weight: -7
 is_admin: null
 permissions:
+  - 'access block library'
+  - 'access content overview'
   - 'access contextual links'
+  - 'access files overview'
+  - 'access group overview'
   - 'access media overview'
   - 'access site reports'
+  - 'add section library templates'
   - 'administer nodes'
+  - 'administer toc_js per node'
   - 'configure editable basic_group group layout overrides'
   - 'configure editable page node layout overrides'
   - 'create and edit custom blocks'
+  - 'create basic block content'
   - 'create document media'
   - 'create image media'
   - 'create kaltura media'
+  - 'create osu_accordion block content'
+  - 'create osu_card block content'
+  - 'create osu_menu_bar_item block content'
   - 'create remote_video media'
   - 'create url aliases'
   - 'delete own document media'
   - 'delete own image media'
   - 'delete own kaltura media'
   - 'delete own remote_video media'
+  - 'delete section library templates'
   - 'dropzone upload files'
   - 'edit own document media'
   - 'edit own image media'
   - 'edit own kaltura media'
   - 'edit own remote_video media'
+  - 'edit section library templates'
+  - 'import template from section library'
   - 'manage editoria11y results'
+  - 'manage layout builder component attributes'
   - 'mark as hidden in editoria11y'
   - 'mark as ok in editoria11y'
+  - 'revert any basic block content revisions'
+  - 'revert any osu_accordion block content revisions'
+  - 'revert any osu_card block content revisions'
+  - 'revert any osu_menu_bar_item block content revisions'
   - 'use text format full_html'
   - 'view all media revisions'
+  - 'view any basic block content history'
+  - 'view any osu_accordion block content history'
+  - 'view any osu_card block content history'
+  - 'view any osu_menu_bar_item block content history'
   - 'view editoria11y checker'
   - 'view own unpublished content'
+  - 'view section library templates'
