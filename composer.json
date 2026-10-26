@@ -21,7 +21,9 @@
   "scripts": {
     "phpcs": "phpcs",
     "phpcbf": "phpcbf",
-    "twigcs": "twigcs --twig-version=2"
+    "twigcs": "twigcs --twig-version=2",
+    "php-cs-fixer": "php-cs-fixer check",
+    "php-cs-fixer-fix": "php-cs-fixer fix"
   },
   "config": {
     "allow-plugins": {
