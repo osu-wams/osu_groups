@@ -84,7 +84,7 @@ function osu_groups_basic_group_is_group(): bool {
 
   if ($node = Drupal::routeMatch()->getParameter('node')) {
     $osu_groups = Drupal::service('osu_groups.group_handler');
-    $group_relationship = $osu_groups->getGroupContentFromNode($node);
+    $group_relationship = $osu_groups->getGroupRelationshipFromNode($node);
 
     if ($group_relationship) {
       $is_group = TRUE;
