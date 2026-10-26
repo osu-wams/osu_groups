@@ -111,8 +111,8 @@ class OsuGroupsBasicGroupPathKernelTest extends EntityKernelTestBase {
       'label' => 'Group Menu',
     ]);
     $group_menu_type->save();
-    /** @var \Drupal\group\Entity\Storage\GroupContentTypeStorageInterface $storage */
-    $storage = $this->entityTypeManager->getStorage('group_content_type');
+    /** @var \Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage('group_relationship_type');
     // Create group content from plugin.
     $storage->createFromPlugin($group_type, 'group_content_menu:group_menu')
       ->save();
