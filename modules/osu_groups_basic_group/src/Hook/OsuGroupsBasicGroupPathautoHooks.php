@@ -34,9 +34,9 @@ class OsuGroupsBasicGroupPathautoHooks {
   public function pathautoPatternAlter(PathautoPatternInterface $pattern, array $context) {
     if ($context['module'] === 'node' && ($context['op'] === 'update' || $context['op'] === 'bulkupdate')) {
       $node = $context['data']['node'];
-      $group_content = $this->osuGroupsHandler->getGroupContentFromNode($node);
+      $group_relationship = $this->osuGroupsHandler->getGroupRelationshipFromNode($node);
 
-      if ($group_content) {
+      if ($group_relationship) {
         $menu_links = $this->menuLinkManager->loadLinksByRoute('entity.node.canonical', ['node' => $node->id()]);
 
         if (empty($menu_links)) {

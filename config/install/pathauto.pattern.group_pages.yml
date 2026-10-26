@@ -6,7 +6,7 @@ dependencies:
 id: group_pages
 label: 'Group Pages'
 type: 'canonical_entities:group'
-pattern: '[group:title]'
+pattern: '/[group:title]'
 selection_criteria: {  }
 selection_logic: and
 weight: 0

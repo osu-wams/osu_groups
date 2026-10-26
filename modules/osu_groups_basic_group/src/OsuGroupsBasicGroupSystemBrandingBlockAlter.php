@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\osu_groups_basic_group;
 
 use Drupal\Core\Cache\CacheableMetadata;
@@ -25,10 +27,11 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
     $osu_groups = \Drupal::service('osu_groups.group_handler');
 
     if ($node = \Drupal::routeMatch()->getParameter('node')) {
-      $group_content = $osu_groups->getGroupContentFromNode($node);
-      if ($group_content) {
+      $group_relationship = $osu_groups->getGroupRelationshipFromNode($node);
+
+      if ($group_relationship) {
         $group_name = $osu_groups->getGroupNameFromNode($node);
-        $group = $group_content->getGroup();
+        $group = $group_relationship->getGroup();
         // Set the group name, path in the site branding block.
         $build['content']['group_name_link'] = [
           '#type' => 'link',
@@ -74,6 +77,7 @@ class OsuGroupsBasicGroupSystemBrandingBlockAlter implements RenderCallbackInter
         '#url' => $group->toUrl(),
       ];
     }
+
     return $build;
   }
 

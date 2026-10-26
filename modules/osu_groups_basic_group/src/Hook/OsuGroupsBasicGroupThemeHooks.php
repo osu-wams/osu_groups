@@ -40,13 +40,13 @@ class OsuGroupsBasicGroupThemeHooks {
     $node = $this->routeMatch->getParameter('node');
 
     if ($node) {
-      $group_content = $this->osuGroupsHandler->getGroupContentFromNode($node);
+      $group_relationship = $this->osuGroupsHandler->getGroupRelationshipFromNode($node);
       $group_node_auto_title = $this->configFactory
         ->getEditable('group.settings')->get('osu_groups_page_title');
 
-      if ($group_content && $group_node_auto_title) {
+      if ($group_relationship && $group_node_auto_title) {
         /** @var \Drupal\group\Entity\Group $group */
-        $group = $group_content->getGroup();
+        $group = $group_relationship->getGroup();
         // On Group Content Pages insert Group name after node name.
         $group_name = $this->osuGroupsHandler->getGroupnameFromGroup($group);
         $page_title_array = explode(' | ', (string) $variables['head_title']['title']);

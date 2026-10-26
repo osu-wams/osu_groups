@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\osu_groups\Plugin\RulesAction;
 
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
@@ -18,21 +20,21 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Add nodes to groups.
  */
 #[RulesAction(
-  id: "rules_group_make_content",
-  label: new TranslatableMarkup("Make selected content belongs to selected group"),
-  category: new TranslatableMarkup("Group Content"),
+  id: 'rules_group_make_content',
+  label: new TranslatableMarkup('Make selected content belongs to selected group'),
+  category: new TranslatableMarkup('Group Content'),
   context_definitions: [
-    "node" => new ContextDefinition(
-      data_type: "entity:node",
-      label: new TranslatableMarkup("The node to add to the group."),
-      description: new TranslatableMarkup("The node to add to the group."),
-      assignment_restriction: "selector"
+    'node' => new ContextDefinition(
+      data_type: 'entity:node',
+      label: new TranslatableMarkup('The node to add to the group.'),
+      description: new TranslatableMarkup('The node to add to the group.'),
+      assignment_restriction: 'selector'
     ),
-    "gid" => new ContextDefinition(
-      data_type: "integer",
-      label: new TranslatableMarkup("The group to add the node to."),
+    'gid' => new ContextDefinition(
+      data_type: 'integer',
+      label: new TranslatableMarkup('The group to add the node to.'),
       required: FALSE,
-      description: new TranslatableMarkup("The group to add the node to."),
+      description: new TranslatableMarkup('The group to add the node to.'),
       default_value: NULL
     ),
   ]
@@ -40,18 +42,14 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class GroupMakeNodeContent extends RulesActionBase implements ContainerFactoryPluginInterface {
 
   /**
-   * The Logger Factory.
-   *
-   * @var \Drupal\Core\Logger\LoggerChannelFactoryInterface
-   */
-  protected LoggerChannelFactoryInterface $loggerFactory;
-
-  /**
    * The Entity Type Manager Interface.
-   *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The Logger Factory.
+   */
+  protected LoggerChannelFactoryInterface $loggerFactory;
 
   /**
    * Constructs a new instance of the class.
@@ -113,10 +111,11 @@ class GroupMakeNodeContent extends RulesActionBase implements ContainerFactoryPl
 
     /** @var \Drupal\group\Entity\Group $group */
     $group = $groupStorage->load($gid);
-    $pluginId = "group_node:" . $node->getType();
+    $pluginId = 'group_node:' . $node->getType();
 
     if ($group) {
       $existingRelationships = $group->getRelationshipsByEntity($node, $pluginId);
+
       // Check if the node is already a member of the group.
       if (!empty($existingRelationships)) {
         return;
