@@ -24,32 +24,25 @@ class OsuGroupsBasicGroupPathautoHooks {
    *
    * Using Patch from https://www.drupal.org/project/group/issues/2774827
    *
-   * Update pages added to a group not in a menu with
-   *   "/[node:group:url:path]/[node:title]"
-   *
-   * Update pages that are in the Group menu and are the top level link with
-   *   "/[node:group:url:path]/[node:title]"
+   * Group content that is not in a menu or is a top-level menu item uses
+   * the Group path. Nested menu items retain their normal selected pattern.
    */
   #[Hook('pathauto_pattern_alter')]
-  public function pathautoPatternAlter(PathautoPatternInterface $pattern, array $context) {
+  public function pathautoPatternAlter(PathautoPatternInterface $pattern, array $context): void {
     if ($context['module'] === 'node' && ($context['op'] === 'update' || $context['op'] === 'bulkupdate')) {
       $node = $context['data']['node'];
       $group_content = $this->osuGroupsHandler->getGroupContentFromNode($node);
 
-      if ($group_content) {
-        $menu_links = $this->menuLinkManager->loadLinksByRoute('entity.node.canonical', ['node' => $node->id()]);
+      if (!$group_content) {
+        return;
+      }
 
-        if (empty($menu_links)) {
-          $pattern->setPattern('/[node:group:url:path]/[node:title]');
-        }
-        else {
-          $menu_link = reset($menu_links);
-          $parent = $menu_link->getParent();
+      $menu_links = $this->menuLinkManager->loadLinksByRoute('entity.node.canonical', ['node' => $node->id()]);
 
-          if (empty($parent)) {
-            $pattern->setPattern('/[node:group:url:path]/[node:title]');
-          }
-        }
+      $menu_link = reset($menu_links);
+
+      if ($menu_link === FALSE || $menu_link->getParent() === '') {
+        $pattern->setPattern('/[node:group:url:path]/[node:title]');
       }
     }
   }
