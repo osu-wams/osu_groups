@@ -178,9 +178,9 @@ function _group_admin_permissions(Role $role): void {
   $role->grantPermission('administer group');
   $role->grantPermission('administer group display');
   $role->grantPermission('administer group fields');
-  $role->grantPermission('administer group_content display');
-  $role->grantPermission('administer group_content fields');
-  $role->grantPermission('administer group_content form display');
+  $role->grantPermission('administer group_relationship display');
+  $role->grantPermission('administer group_relationship fields');
+  $role->grantPermission('administer group_relationship form display');
   $role->grantPermission('create basic_group group');
   $role->grantPermission('configure all basic_group group layout overrides');
   $role->grantPermission('configure editable basic_group group layout overrides');
